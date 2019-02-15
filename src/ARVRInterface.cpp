@@ -14,6 +14,7 @@
 #include <Engine.hpp>
 #include <Viewport.hpp>
 #include <cassert>
+#include "String.hpp"
 
 //using namespace godot;
 
@@ -427,7 +428,10 @@ void godot_arvr_process(void *p_data) {
     
     godot::SceneTree* tree  = (godot::SceneTree*)godot::Engine::get_singleton()->get_main_loop();
     auto a = tree->get_root();
-    auto camera = ((godot::Spatial*)a->get_node("Main/ARVROrigin/ARVRCamera"));
+    
+    //godot::String originPath = "Spatial/robot/camera_base/camera_rot/Camera/ARVROrigin";
+    godot::String originPath = "Main/ARVROrigin";
+    auto camera = ((godot::Spatial*)a->get_node(originPath + "/ARVRCamera"));
     arvr_data_struct * arvr_data = (arvr_data_struct *) p_data;
     arvr_data->pe = camera->get_translation();
     auto r = camera->get_rotation();
@@ -435,9 +439,9 @@ void godot_arvr_process(void *p_data) {
     api->godot_vector3_set_axis(&arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, r.y);
     api->godot_vector3_set_axis(&arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, r.z);
 
-    auto pa = ((godot::Spatial*)a->get_node("Main/ARVROrigin/Screen/pa"));
-    auto pb = ((godot::Spatial*)a->get_node("Main/ARVROrigin/Screen/pb"));
-    auto pc = ((godot::Spatial*)a->get_node("Main/ARVROrigin/Screen/pc"));
+    auto pa = ((godot::Spatial*)a->get_node(originPath + "/Screen/pa"));
+    auto pb = ((godot::Spatial*)a->get_node(originPath + "/Screen/pb"));
+    auto pc = ((godot::Spatial*)a->get_node(originPath + "/Screen/pc"));
     arvr_data->pa = pa->get_translation();
     arvr_data->pb = pb->get_translation();
     arvr_data->pc = pc->get_translation();

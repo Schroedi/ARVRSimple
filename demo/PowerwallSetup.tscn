@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://PowerwallCam.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/arvrsimple/arvrsimple.gdns" type="Script" id=2]
+
+[node name="ARVROrigin" type="ARVROrigin"]
+
+[node name="ARVRCamera" parent="." instance=ExtResource( 1 )]
+fov = 165.938
+near = 0.01
+far = 8192.0
+
+[node name="Screen" type="Spatial" parent="."]
+script = ExtResource( 2 )
+
+[node name="pa" type="Spatial" parent="Screen"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0 )
+
+[node name="pb" type="Spatial" parent="Screen"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0 )
+
+[node name="pc" type="Spatial" parent="Screen"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.5, 0 )
+
