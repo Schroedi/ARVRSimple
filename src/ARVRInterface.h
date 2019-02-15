@@ -26,6 +26,8 @@ typedef struct arvr_data_struct {
 	godot::Vector3 pa, pb, pc;
     // eye coordinates
 	godot::Vector3 pe;
+    // eye rotation (X-angle, Y-angle, Z-angle)
+    godot_vector3 re;
     // near and far clip
     float n, f;
     

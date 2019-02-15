@@ -1,31 +1,27 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://PowerwallCam.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/arvrsimple/arvrsimple.gdns" type="Script" id=3]
-[ext_resource path="res://Table.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Checkermotoslogo.svg.png" type="Texture" id=4]
+[ext_resource path="res://Table.tscn" type="PackedScene" id=5]
 
 [sub_resource type="Environment" id=1]
-
 background_mode = 1
 background_color = Color( 0, 0.53833, 0.703125, 1 )
 ambient_light_color = Color( 0.328125, 0.328125, 0.328125, 1 )
 ssao_blur = 1
 
 [sub_resource type="SpatialMaterial" id=2]
-
-params_diffuse_mode = 1
-albedo_color = Color( 0.509804, 0.509804, 0.509804, 1 )
+albedo_texture = ExtResource( 4 )
 
 [sub_resource type="PlaneMesh" id=3]
-
 material = SubResource( 2 )
 size = Vector2( 10, 10 )
 subdivide_width = 10
 subdivide_depth = 10
 
 [sub_resource type="CubeMesh" id=4]
-
 size = Vector3( 1, 1.8, 1 )
 
 [node name="Main" type="Spatial"]
@@ -46,16 +42,24 @@ near = 0.01
 far = 8192.0
 
 [node name="Screen" type="Spatial" parent="ARVROrigin"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.20388 )
 script = ExtResource( 3 )
 
+[node name="pa" type="Spatial" parent="ARVROrigin/Screen"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0 )
+
+[node name="pb" type="Spatial" parent="ARVROrigin/Screen"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0 )
+
+[node name="pc" type="Spatial" parent="ARVROrigin/Screen"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.5, 0 )
+
 [node name="Ground" type="MeshInstance" parent="."]
-transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
+transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0.00196028, -0.00594401, 0.00192273 )
 mesh = SubResource( 3 )
 material/0 = null
 
-[node name="Table2" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.224683, -0.0288484, -2.6483 )
+[node name="Table2" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.224683, -0.0288484, -8.8138 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.766263, -2 )
@@ -64,7 +68,7 @@ mesh = SubResource( 4 )
 material/0 = null
 
 [node name="MeshInstance4" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4886, 0.913522, -0.487796 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.33708, 0.913522, -0.599857 )
 extra_cull_margin = 16384.0
 mesh = SubResource( 4 )
 material/0 = null

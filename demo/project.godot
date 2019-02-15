@@ -15,8 +15,8 @@ _global_script_class_icons={
 
 [application]
 
-config/name="ARVR Simple demo"
-run/main_scene="res://Main.tscn"
+config/name="Powerwall"
+run/main_scene="res://LineTest.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -40,4 +40,5 @@ visual_debugger={
 
 [rendering]
 
+quality/filters/msaa=4
 environment/default_environment="res://default_env.tres"
