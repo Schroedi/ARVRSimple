@@ -170,9 +170,9 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
 	hmd_transform = api->godot_transform_translated(&hmd_transform, &offset);
 
 	// Now construct our full transform, the order may be in reverse, have to test :)
-	//ret = *p_cam_transform;
-    api->godot_transform_new_identity(&ret);
-    ret = api->godot_transform_operator_multiply(&ret, p_cam_transform);
+	ret = *p_cam_transform;
+    //api->godot_transform_new_identity(&ret);
+    //ret = api->godot_transform_operator_multiply(&ret, p_cam_transform);
 	ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
     ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
 	ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
@@ -302,7 +302,17 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection, 
     float f = 100; //p_z_far;
     godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
 
-    godot::Vector3 pe = arvr_data->pe;
+    //godot::Vector3 pe = arvr_data->pe;
+    godot_transform eye_transf;
+    api->godot_transform_new_identity(&eye_transf);
+    eye_transf = godot_arvr_get_transform_for_eye(p_data, p_eye, &eye_transf);
+    auto eye_pos = api->godot_transform_get_origin(&eye_transf);
+    godot::Vector3 pe;
+    pe.x = api->godot_vector3_get_axis(&eye_pos, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
+    pe.y = api->godot_vector3_get_axis(&eye_pos, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
+    pe.z = api->godot_vector3_get_axis(&eye_pos, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
+    printf("eye: %f, %f, %f\n", pe.x, pe.y, pe.z);
+    
 
     // Compute an orthonormal basis for the screen.
     arvr_data->vr = arvr_data->pb - arvr_data->pa;
