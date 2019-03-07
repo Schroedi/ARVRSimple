@@ -7,21 +7,25 @@
 [ext_resource path="res://Table.tscn" type="PackedScene" id=5]
 
 [sub_resource type="Environment" id=1]
+
 background_mode = 1
 background_color = Color( 0, 0.53833, 0.703125, 1 )
 ambient_light_color = Color( 0.328125, 0.328125, 0.328125, 1 )
 ssao_blur = 1
 
 [sub_resource type="SpatialMaterial" id=2]
+
 albedo_texture = ExtResource( 4 )
 
 [sub_resource type="PlaneMesh" id=3]
+
 material = SubResource( 2 )
 size = Vector2( 10, 10 )
 subdivide_width = 10
 subdivide_depth = 10
 
 [sub_resource type="CubeMesh" id=4]
+
 size = Vector3( 1, 1.8, 1 )
 
 [node name="Main" type="Spatial"]

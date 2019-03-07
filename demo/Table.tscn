@@ -1,17 +1,21 @@
 [gd_scene load_steps=5 format=2]
 
 [sub_resource type="SpatialMaterial" id=1]
+
 resource_name = "LegMat"
-params_diffuse_mode = 1
+params_specular_mode = 2
 albedo_color = Color( 0.714844, 0.552887, 0, 1 )
-roughness = 0.0
+metallic_specular = 0.0
+roughness = 0.57
 
 [sub_resource type="CubeMesh" id=2]
+
 resource_name = "Leg"
 material = SubResource( 1 )
 size = Vector3( 0.2, 1.6, 0.2 )
 
 [sub_resource type="SpatialMaterial" id=3]
+
 resource_name = "TableMat"
 params_diffuse_mode = 1
 albedo_color = Color( 0.886275, 0.0431373, 0.0431373, 1 )
@@ -19,6 +23,7 @@ metallic = 0.4
 roughness = 0.0
 
 [sub_resource type="CubeMesh" id=4]
+
 material = SubResource( 3 )
 size = Vector3( 2.2, 0.1, 1.2 )
 

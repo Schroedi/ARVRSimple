@@ -19,10 +19,14 @@ config/name="Powerwall"
 run/main_scene="res://LineTest.tscn"
 config/icon="res://icon.png"
 
+[debug]
+
+settings/stdout/print_fps=true
+
 [display]
 
-window/size/width=1500
-window/size/height=1000
+window/size/width=5120
+window/size/height=1600
 window/size/resizable=false
 window/size/borderless=true
 
@@ -40,7 +44,9 @@ visual_debugger={
 
 [rendering]
 
+quality/filters/anisotropic_filter_level=8
 quality/directional_shadow/size=8192
 quality/shadow_atlas/size=8192
+quality/shadows/filter_mode=2
 quality/filters/msaa=3
 environment/default_environment="res://default_env.tres"
