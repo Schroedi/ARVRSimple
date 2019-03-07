@@ -8,7 +8,9 @@ func _ready():
 	inst = vrpnClient.new()
 	#inst.connect("Tracker0@127.0.0.1:3883")
 	inst.connect("UserB@134.102.222.87:3883")
-	OS.execute("/home/ascadian/Installs/bin/powerMove.sh", ["Powerwall"], false)
+	OS.window_position = Vector2(1920, 0)
+	OS.window_size = Vector2(2560*2, 1600)
+	#OS.execute("/home/ascadian/Installs/bin/powerMove.sh", ["Powerwall"], false)
 
 func _process(delta):
 	inst.mainloop()
