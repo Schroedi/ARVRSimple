@@ -1,17 +1,17 @@
 ////////////////////////////////////////////////////////////////////////////
-// This is just an example ARVR GDNative module. It does very little VR-ish
+// This is just an example POWERWALL GDNative module. It does very little VR-ish
 // It also outputs lots of debugging stuff which should not be in a proper
 // module :)
 
 // Written by Bastiaan "Mux213" Olij, with loads of help from Thomas "Karroffel" Herzog
 
-#include "ARVRSimple.h"
-#include "ARVRScreen.h"
+#include "Powerwall.h"
+#include "PowerwallScreen.h"
 
 extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     godot::Godot::nativescript_init(handle);
 
-    godot::register_class<godot::ArvrScreen>();
+    godot::register_class<godot::PowerwallScreen>();
 }
 
 extern "C" void GDN_EXPORT godot_gdnative_singleton() {

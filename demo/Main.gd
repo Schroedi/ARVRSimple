@@ -2,7 +2,7 @@ extends Spatial
 
 func _ready():
 	# Find the interface
-	var arvr_interface = ARVRServer.find_interface("ARVRSimple")
+	var arvr_interface = ARVRServer.find_interface("Powerwall")
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
 

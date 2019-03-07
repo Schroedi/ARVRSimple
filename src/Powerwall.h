@@ -5,11 +5,11 @@
 
 // Written by Bastiaan "Mux213" Olij, with loads of help from Thomas "Karroffel" Herzog
 
-#ifndef ARVR_SIMPLE_H
-#define ARVR_SIMPLE_H
+#ifndef POWERWALL_H
+#define POWERWALL_H
 
 #include "GodotCalls.h"
-#include "ARVRInterface.h"
+#include "PowerwallInterface.h"
 
 // declare our public functions for our ARVR Interface
 #ifdef __cplusplus
@@ -23,4 +23,4 @@ void GDN_EXPORT godot_openvr_nativescript_init(void *p_handle);
 }
 #endif
 
-#endif /* !ARVR_SIMPLE_H */
+#endif /* !POWERWALL_H */

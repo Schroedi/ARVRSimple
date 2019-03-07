@@ -32,7 +32,7 @@ window/size/borderless=true
 
 [gdnative]
 
-singletons=[ "res://addons/arvrsimple/arvrsimple.gdnlib" ]
+singletons=[ "res://addons/powerwall/powerwall.gdnlib" ]
 
 [input]
 

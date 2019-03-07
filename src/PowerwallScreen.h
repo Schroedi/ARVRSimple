@@ -5,12 +5,12 @@
 
 namespace godot {
     
-class ArvrScreen : public Node{
-	GODOT_CLASS(ArvrScreen, Node)
+class PowerwallScreen : public Node{
+	GODOT_CLASS(PowerwallScreen, Node)
 	
 public:
-	ArvrScreen();
-	~ArvrScreen(){};
+	PowerwallScreen();
+	~PowerwallScreen(){};
 
 	static void _register_methods();
     void _init();

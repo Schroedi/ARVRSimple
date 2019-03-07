@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////
-// This is just an example ARVR GDNative module. It does very little VR-ish
+// This is just an example POWERWALL GDNative module. It does very little VR-ish
 // It also outputs lots of debugging stuff which should not be in a proper
 // module :)
 
 // Written by Bastiaan "Mux213" Olij, with loads of help from Thomas "Karroffel" Herzog
 
-#include "ARVRInterface.h"
-#include "ARVRScreen.h"
+#include "PowerwallInterface.h"
+#include "PowerwallScreen.h"
 #include <Godot.hpp>
 #include <Node.hpp>
 #include <Spatial.hpp>
@@ -48,7 +48,7 @@ void godot_arvr_destructor(void *p_data) {
 godot_string godot_arvr_get_name(const void *p_data) {
 	godot_string ret;
 
-	char name[] = "ARVRSimple";
+	char name[] = "PowerwallAR";
 	api->godot_string_new(&ret);
 	api->godot_string_parse_utf8(&ret, name);
 
@@ -124,7 +124,7 @@ void godot_arvr_uninitialize(void *p_data) {
 godot_vector2 godot_arvr_get_recommended_render_targetsize(const void *p_data) {
 	godot_vector2 size;
 
-	// printf("ARVRSimple.arvr_get_recommended_render_targetsize()\n");
+	// printf("Powerwall.arvr_get_recommended_render_targetsize()\n");
 
 	api->godot_vector2_new(&size, 5120, 1600);
 

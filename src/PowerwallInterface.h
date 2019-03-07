@@ -5,8 +5,8 @@
 
 // Written by Bastiaan "Mux213" Olij, with loads of help from Thomas "Karroffel" Herzog
 
-#ifndef ARVR_INTERFACE_H
-#define ARVR_INTERFACE_H
+#ifndef POWERWALL_INTERFACE_H
+#define POWERWALL_INTERFACE_H
 
 #include "GodotCalls.h"
 #include <Godot.hpp>
@@ -33,4 +33,4 @@ typedef struct arvr_data_struct {
     
 } arvr_data_struct;
 
-#endif /* !ARVR_INTERFACE_H */
+#endif /* !POWERWALL_INTERFACE_H */

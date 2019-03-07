@@ -8,12 +8,10 @@
 [ext_resource path="res://Fps.gd" type="Script" id=6]
 
 [sub_resource type="ProceduralSky" id=1]
-
 sun_latitude = 72.25
 sun_longitude = 53.79
 
 [sub_resource type="Environment" id=2]
-
 background_sky = SubResource( 1 )
 background_color = Color( 0, 0.53833, 0.703125, 1 )
 ambient_light_color = Color( 0.328125, 0.328125, 0.328125, 1 )
@@ -23,26 +21,21 @@ ssao_quality = 2
 ssao_blur = 1
 
 [sub_resource type="ShaderMaterial" id=3]
-
 shader = ExtResource( 3 )
 
 [sub_resource type="PlaneMesh" id=4]
-
 material = SubResource( 3 )
 
 [sub_resource type="PlaneMesh" id=5]
-
 material = ExtResource( 4 )
 size = Vector2( 10, 10 )
 subdivide_width = 10
 subdivide_depth = 10
 
 [sub_resource type="CubeMesh" id=6]
-
 size = Vector3( 0.01, 0.26, 10 )
 
 [sub_resource type="CubeMesh" id=7]
-
 size = Vector3( 0.01, 0.1, 10 )
 
 [node name="Main" type="Spatial"]
