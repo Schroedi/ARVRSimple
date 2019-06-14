@@ -6,16 +6,13 @@
 // Written by Bastiaan "Mux213" Olij, with loads of help from Thomas "Karroffel" Herzog
 
 #include "Powerwall.h"
-#include "PowerwallScreen.h"
+//#include "PowerwallScreen.h"
 
-extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
-    godot::Godot::nativescript_init(handle);
-
-    godot::register_class<godot::PowerwallScreen>();
+void GDN_EXPORT godot_powerwall_gdnative_singleton() {
+    if (arvr_api != NULL) {
+        arvr_api->godot_arvr_register_interface(&interface_struct);
+    }
 }
 
-extern "C" void GDN_EXPORT godot_gdnative_singleton() {
-	if (arvr_api != NULL) {
-		arvr_api->godot_arvr_register_interface(&interface_struct);
-	}
+void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle) {
 }

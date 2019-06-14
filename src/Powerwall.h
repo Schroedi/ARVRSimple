@@ -16,8 +16,8 @@
 extern "C" {
 #endif
 
-void GDN_EXPORT godot_openvr_gdnative_singleton();
-void GDN_EXPORT godot_openvr_nativescript_init(void *p_handle);
+void GDN_EXPORT godot_powerwall_gdnative_singleton();
+void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle);
 
 #ifdef __cplusplus
 }
