@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 
+project(powerwall)
+
 # Default build type is Debug
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
@@ -25,7 +27,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project(powerwall)
 
 set(GODOT_HEADERS_DIR "/home/ascadian/godot_src/modules/gdnative/include")
 
