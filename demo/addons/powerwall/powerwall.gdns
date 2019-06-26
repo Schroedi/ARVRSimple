@@ -5,6 +5,6 @@
 [resource]
 
 resource_name = "Powerwall"
-class_name = "PowerwallScreen"
+class_name = "Powerwall"
 library = ExtResource( 1 )
 _sections_unfolded = [ "Resource" ]

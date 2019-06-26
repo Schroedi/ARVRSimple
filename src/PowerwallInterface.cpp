@@ -228,6 +228,13 @@ void TransformToCam(const godot_transform& in, godot_real *p_projection) {
 
 }
 
+void print_vec3(godot_vector3 *p) {
+    float x = api->godot_vector3_get_axis(p, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
+    float y = api->godot_vector3_get_axis(p, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
+    float z = api->godot_vector3_get_axis(p, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
+    printf("%f, %f, %f\n", x, y, z);
+}
+
 void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
                                         godot_int p_eye, godot_real p_aspect,
                                         godot_real p_z_near,
@@ -302,9 +309,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 }
 
 godot_int godot_arvr_get_external_texture_for_eye(void *p_data, godot_int p_eye) {
-    auto *arvr_data = (arvr_data_struct *)p_data;
-    assert(arvr_data != nullptr); // "Invalid arvr data."
-    assert(false); // "We don't have a texture for the powerwall."
+    // we don't support this
     return 0;
 }
 
@@ -355,8 +360,8 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
 
     // eye coordinates - updated in the arvr-process method
-    api->godot_vector3_new(&arvr_data->pe, 0,0,0);
-    api->godot_vector3_new(&arvr_data->re, 0,0,0);
+    api->godot_vector3_new(&arvr_data->pe, 0,1.75, 2);
+    api->godot_vector3_new(&arvr_data->re, 0,1,0);
 
     return arvr_data;
 };
