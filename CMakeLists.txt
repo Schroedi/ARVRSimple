@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.6)
-
+cmake_minimum_required(VERSION 3.13)
+include(FetchContent)
 project(powerwall)
 
 # Default build type is Debug
@@ -26,6 +26,21 @@ endif (NOT (EXISTS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}))
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# vrpn
+FetchContent_Declare(
+        vrpn
+        GIT_REPOSITORY https://github.com/vrpn/vrpn.git
+        GIT_TAG        version_07.34
+)
+FetchContent_GetProperties(vrpn)
+if(NOT vrpn_POPULATED)
+    FetchContent_Populate(vrpn)
+    add_subdirectory(${vrpn_SOURCE_DIR} ${vrpn_BINARY_DIR})
+endif()
+
+# pthreads for vrpn
+find_package(Threads REQUIRED)
 
 
 set(GODOT_HEADERS_DIR "/home/ascadian/godot_src/modules/gdnative/include")
@@ -70,6 +85,8 @@ target_include_directories(${PROJECT_NAME}
         ${GODOT_HEADERS_DIR}
         ${OVR_HEADERS_DIR}
         )
+
+target_link_libraries(${PROJECT_NAME} vrpn quat Threads::Threads )
 
 # Add the compile flags
 set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS ${GODOT_COMPILE_FLAGS})

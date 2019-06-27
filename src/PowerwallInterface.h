@@ -8,6 +8,7 @@
 #ifndef POWERWALL_INTERFACE_H
 #define POWERWALL_INTERFACE_H
 
+#include <vrpn_Tracker.h>
 #include "GodotCalls.h"
 
 typedef struct arvr_data_struct {
@@ -16,6 +17,7 @@ typedef struct arvr_data_struct {
     float iod_cm;
     float oversample;
 
+    vrpn_Tracker_Remote *vrpnTracker;
 
     godot_vector3 va, vb, vc;
     godot_vector3 vr, vu, vn;
@@ -24,7 +26,7 @@ typedef struct arvr_data_struct {
     // eye coordinates
     godot_vector3 pe;
     // eye rotation (X-angle, Y-angle, Z-angle)
-    godot_vector3 re;
+    godot_quat re;
     // near and far clip
     float n, f;
 } arvr_data_struct;
