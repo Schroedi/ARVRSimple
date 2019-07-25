@@ -10,6 +10,8 @@
 #include <cassert>
 #include <iostream>
 
+bool swap_eyes = -1; // 1: no swap, -1 swap
+
 
 namespace {
 const char *kName = "Powerwall";
@@ -19,8 +21,8 @@ void VRPN_CALLBACK tracker_callback(void* p_data, const vrpn_TRACKERCB t ){
     auto *arvr_data = (arvr_data_struct *)p_data;
 
     api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, t.pos[0]);
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, t.pos[1]);
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, t.pos[2]);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, t.pos[2]);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, -t.pos[1]);
 
     api->godot_quat_set_x(&arvr_data->re, t.quat[0]);
     api->godot_quat_set_y(&arvr_data->re, t.quat[1]);
@@ -84,7 +86,8 @@ godot_bool godot_arvr_initialize(void *p_data) {
 
     // init vrpn
     /* TODO: make tracker name variable -> attribute with onchange? */
-    arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
+    //arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
+    arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "UserA@tcp:134.102.222.87" );
     if(arvr_data->vrpnTracker == NULL){
         std::cout << "vrpnServer() Error: trackerVrpnServer could not be created" << std::endl;
     }
@@ -172,6 +175,7 @@ void arvr_set_frustum(godot_real *p_projection, godot_real p_left, godot_real p_
     godot_real c = -(p_far + p_near) / (p_far - p_near);
     godot_real d = -2 * p_far * p_near / (p_far - p_near);
 
+    // Godot is column major
     p_projection[0] = x;
     p_projection[1] = 0;
     p_projection[2] = 0;
@@ -262,7 +266,6 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     assert(arvr_data != nullptr); // "Invalid arvr data"
 
     // arbitrary projection from: https://csc.lsu.edu/~kooima/articles/genperspective/
-
     float n = p_z_near;
     float f = p_z_far;
 
@@ -271,11 +274,6 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     api->godot_transform_new_identity(&eye_transf);
     eye_transf = godot_arvr_get_transform_for_eye(p_data, p_eye, &eye_transf);
     auto pe = api->godot_transform_get_origin(&eye_transf);
-//    godot::Vector3 pe;
-//    pe.x = api->godot_vector3_get_axis(&eye_pos, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-//    pe.y = api->godot_vector3_get_axis(&eye_pos, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-//    pe.z = api->godot_vector3_get_axis(&eye_pos, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-
 
     // Compute an orthonormal basis for the screen.
     arvr_data->vr = api->godot_vector3_operator_subtract(&arvr_data->pb, &arvr_data->pa);
@@ -293,7 +291,6 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     arvr_data->vc = api->godot_vector3_operator_subtract(&arvr_data->pc, &pe);
 
     // Find the distance from the eye to screen plane.
-
     float d = - api->godot_vector3_dot(&arvr_data->vn, &arvr_data->va);// / 2.0;
 
     // Find the extent of the perpendicular projection.
@@ -338,7 +335,8 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // "Invalid arvr data.");
     assert(p_eye != /* EYE_MONO */ 0); // "Mono rendering is not supported.");
-
+    if (swap_eyes)
+        p_eye = p_eye == 1 ? 2 : 1;
     arvr_api->godot_arvr_blit(p_eye, p_render_target, p_screen_rect);
 }
 
@@ -348,7 +346,7 @@ void godot_arvr_process(void *p_data) {
 
     arvr_data->vrpnTracker->mainloop();
 
-    // TODO fix this, hope this fixes the gray screen
+    // TODO fix this
 
 //    godot::SceneTree* tree  = (godot::SceneTree*)godot::Engine::get_singleton()->get_main_loop();
 //    auto a = tree->get_root();

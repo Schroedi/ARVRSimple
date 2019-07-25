@@ -9,6 +9,7 @@ func _ready():
 	#inst.connect("Tracker0@127.0.0.1")
 	#inst.connect("UserA@134.102.222.87")
 	#OS.window_position = Vector2(1920, 0)
+	OS.window_position = Vector2(0, 0)
 	OS.window_size = Vector2(2560*2	, 1600)
 	#OS.execute("/home/ascadian/Installs/bin/powerMove.sh", ["Powerwall"], false)
 
