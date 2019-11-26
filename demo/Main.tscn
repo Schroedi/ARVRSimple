@@ -1,31 +1,27 @@
 [gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
-[ext_resource path="res://PowerwallCam.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/powerwall/PowerwallCam.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/powerwall/powerwall.gdns" type="Script" id=3]
 [ext_resource path="res://Checkermotoslogo.svg.png" type="Texture" id=4]
 [ext_resource path="res://Table.tscn" type="PackedScene" id=5]
 
 [sub_resource type="Environment" id=1]
-
 background_mode = 1
 background_color = Color( 0, 0.53833, 0.703125, 1 )
 ambient_light_color = Color( 0.328125, 0.328125, 0.328125, 1 )
 ssao_blur = 1
 
 [sub_resource type="SpatialMaterial" id=2]
-
 albedo_texture = ExtResource( 4 )
 
 [sub_resource type="PlaneMesh" id=3]
-
 material = SubResource( 2 )
 size = Vector2( 10, 10 )
 subdivide_width = 10
 subdivide_depth = 10
 
 [sub_resource type="CubeMesh" id=4]
-
 size = Vector3( 1, 1.8, 1 )
 
 [node name="Main" type="Spatial"]
@@ -88,4 +84,3 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.766263, 0 )
 extra_cull_margin = 16384.0
 mesh = SubResource( 4 )
 material/0 = null
-

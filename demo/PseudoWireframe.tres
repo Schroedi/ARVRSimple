@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode unshaded, cull_disabled;
+
+void fragment() {
+	//vec3 tex = texture(SCREEN_TEXTURE, SCREEN_UV).rgb;
+	float dx = max(UV.x, 1.0 - UV.x);
+	float dy = max(UV.y, 1.0 - UV.y);
+	float d = max(dx, dy);
+	if (d < .99) {
+		discard;
+	}
+	//EMISSION = vec3(0.0,1.0,1.0);
+	//ALBEDO = vec3(dx,dy,1.0);
+	ALBEDO = vec3(1.0, 0.0, 0.0);
+}
+"
+
+[resource]
+shader = SubResource( 1 )

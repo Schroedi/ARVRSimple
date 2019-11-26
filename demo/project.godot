@@ -41,6 +41,11 @@ visual_debugger={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777252,"unicode":0,"echo":false,"script":null)
  ]
 }
+edge_mode={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":80,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [rendering]
 
@@ -48,5 +53,5 @@ quality/filters/anisotropic_filter_level=8
 quality/directional_shadow/size=8192
 quality/shadow_atlas/size=8192
 quality/shadows/filter_mode=2
-quality/filters/msaa=3
+quality/filters/msaa=4
 environment/default_environment="res://default_env.tres"

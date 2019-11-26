@@ -13,7 +13,7 @@ func _process(delta):
 	#print(inst.analog)
 	#print(inst.pos)
 	get_parent().translation.x = inst.pos[0]
-	get_parent().translation.y = inst.pos[1]
-	get_parent().translation.z = inst.pos[2]
+	get_parent().translation.y = inst.pos[2]
+	get_parent().translation.z = -inst.pos[1]
 	#print(inst.pos)
 	#print(inst.button)

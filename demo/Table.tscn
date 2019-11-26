@@ -1,7 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
 [sub_resource type="SpatialMaterial" id=1]
-
 resource_name = "LegMat"
 params_specular_mode = 2
 albedo_color = Color( 0.714844, 0.552887, 0, 1 )
@@ -9,13 +8,14 @@ metallic_specular = 0.0
 roughness = 0.57
 
 [sub_resource type="CubeMesh" id=2]
-
 resource_name = "Leg"
 material = SubResource( 1 )
 size = Vector3( 0.2, 1.6, 0.2 )
+subdivide_width = 3
+subdivide_height = 3
+subdivide_depth = 3
 
 [sub_resource type="SpatialMaterial" id=3]
-
 resource_name = "TableMat"
 params_diffuse_mode = 1
 albedo_color = Color( 0.886275, 0.0431373, 0.0431373, 1 )
@@ -23,30 +23,38 @@ metallic = 0.4
 roughness = 0.0
 
 [sub_resource type="CubeMesh" id=4]
-
 material = SubResource( 3 )
 size = Vector3( 2.2, 0.1, 1.2 )
+subdivide_width = 3
+subdivide_height = 3
+subdivide_depth = 3
 
 [node name="Table" type="Spatial"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
 
 [node name="Leg1" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.204891, 0.5 )
+visible = false
+extra_cull_margin = 8045.71
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Leg2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.204891, 0.5 )
+visible = false
+extra_cull_margin = 8045.71
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Leg3" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.204891, -0.5 )
+extra_cull_margin = 8045.71
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Leg4" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.204891, -0.5 )
+extra_cull_margin = 8045.71
 mesh = SubResource( 2 )
 material/0 = null
 
@@ -55,4 +63,3 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0 )
 extra_cull_margin = 6950.79
 mesh = SubResource( 4 )
 material/0 = null
-

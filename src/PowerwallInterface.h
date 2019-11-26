@@ -15,7 +15,6 @@ typedef struct arvr_data_struct {
     godot_object * instance;
     bool is_initialised;
     float iod_cm;
-    float oversample;
 
     vrpn_Tracker_Remote *vrpnTracker;
 
@@ -29,7 +28,10 @@ typedef struct arvr_data_struct {
     godot_quat re;
     // near and far clip
     float n, f;
+    godot_bool enable_edge_adjust;
 } arvr_data_struct;
+
+extern arvr_data_struct *arvr_data;
 
 void *godot_arvr_constructor(godot_object *p_instance);
 

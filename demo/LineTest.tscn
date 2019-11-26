@@ -1,7 +1,7 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
-[ext_resource path="res://PowerwallSetup.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=2]
 [ext_resource path="res://checker_shader.shader" type="Shader" id=3]
 [ext_resource path="res://gravel.tres" type="Material" id=4]
 [ext_resource path="res://Table.tscn" type="PackedScene" id=5]
@@ -12,6 +12,7 @@ sun_latitude = 72.25
 sun_longitude = 53.79
 
 [sub_resource type="Environment" id=2]
+background_mode = 2
 background_sky = SubResource( 1 )
 background_color = Color( 0, 0.53833, 0.703125, 1 )
 ambient_light_color = Color( 0.328125, 0.328125, 0.328125, 1 )
@@ -25,18 +26,27 @@ shader = ExtResource( 3 )
 
 [sub_resource type="PlaneMesh" id=4]
 material = SubResource( 3 )
+subdivide_width = 10
+subdivide_depth = 10
 
 [sub_resource type="PlaneMesh" id=5]
 material = ExtResource( 4 )
-size = Vector2( 10, 10 )
+size = Vector2( 100, 100 )
 subdivide_width = 10
 subdivide_depth = 10
 
 [sub_resource type="CubeMesh" id=6]
 size = Vector3( 0.01, 0.26, 10 )
+subdivide_depth = 32
 
-[sub_resource type="CubeMesh" id=7]
+[sub_resource type="SpatialMaterial" id=7]
+flags_vertex_lighting = true
+
+[sub_resource type="CubeMesh" id=8]
 size = Vector3( 0.01, 0.1, 10 )
+subdivide_width = 5
+subdivide_height = 5
+subdivide_depth = 32
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
@@ -52,45 +62,46 @@ shadow_bias = 0.05
 directional_shadow_max_distance = 50.0
 
 [node name="ARVROrigin" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 0.999283, -0.0378646, 0, 0.0378646, 0.999283, 0, 0.07, -0.05 )
 
 [node name="Ground" type="MeshInstance" parent="."]
 transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
+visible = false
 mesh = SubResource( 4 )
 material/0 = null
 
 [node name="Ground2" type="MeshInstance" parent="."]
-transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
-visible = false
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50 )
+extra_cull_margin = 9362.29
 mesh = SubResource( 5 )
 material/0 = null
 
 [node name="Table2" parent="." instance=ExtResource( 5 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00687657, 0.179059, -2.32737 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00687657, 0.179059, -0.364813 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00068444, -0.005, -5.05 )
 extra_cull_margin = 16384.0
 mesh = SubResource( 6 )
-material/0 = null
+material/0 = SubResource( 7 )
 
 [node name="MeshInstance4" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.00068, -0.005, -5.05 )
 extra_cull_margin = 16384.0
 mesh = SubResource( 6 )
-material/0 = null
+material/0 = SubResource( 7 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.999316, -0.005, -5.05 )
+cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource( 6 )
-material/0 = null
+material/0 = SubResource( 7 )
 
 [node name="MeshInstance3" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.059, 1.136, -3.82 )
 extra_cull_margin = 16384.0
-mesh = SubResource( 7 )
-material/0 = null
+mesh = SubResource( 8 )
+material/0 = SubResource( 7 )
 
 [node name="Ui" type="CanvasLayer" parent="."]
 
@@ -102,4 +113,3 @@ margin_bottom = 86.0
 rect_scale = Vector2( 2, 2 )
 text = "test"
 script = ExtResource( 6 )
-
