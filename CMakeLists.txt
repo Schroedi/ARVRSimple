@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.14)
 include(FetchContent)
 project(powerwall)
+
+# For easy build debugging
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Default build type is Debug
 if (NOT CMAKE_BUILD_TYPE)
@@ -28,25 +31,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # vrpn
+# Forces building vrpn client, this is disabled by default if vrpn is included as a subproject
+set(VRPN_BUILD_CLIENT_LIBRARY ON CACHE INTERNAL "")
 FetchContent_Declare(
         vrpn
         GIT_REPOSITORY https://github.com/vrpn/vrpn.git
         GIT_TAG        version_07.34
 )
-FetchContent_GetProperties(vrpn)
-if(NOT vrpn_POPULATED)
-    FetchContent_Populate(vrpn)
-    add_subdirectory(${vrpn_SOURCE_DIR} ${vrpn_BINARY_DIR})
-endif()
+FetchContent_MakeAvailable(vrpn)
 
 # pthreads for vrpn
 find_package(Threads REQUIRED)
 
 
-set(GODOT_HEADERS_DIR "/home/ascadian/godot_src/modules/gdnative/include")
-
 set(GODOT_COMPILE_FLAGS)
-
 set(GODOT_COMPILE_FLAGS "-fPIC -g -Wwrite-strings")
 set(GODOT_COMPILE_FLAGS "${GODOT_COMPILE_FLAGS} -Wchar-subscripts -Wcomment -Wdisabled-optimization")
 set(GODOT_COMPILE_FLAGS "${GODOT_COMPILE_FLAGS} -Wformat -Wformat=2 -Wformat-security -Wformat-y2k")
@@ -82,8 +80,8 @@ target_include_directories(${PROJECT_NAME}
 # Put godot headers as SYSTEM PUBLIC to exclude warnings from irrelevant headers
 target_include_directories(${PROJECT_NAME}
         SYSTEM PUBLIC
-        ${GODOT_HEADERS_DIR}
-        ${OVR_HEADERS_DIR}
+        godot_headers
+        ${VRPN_INCLUDE_DIRS}
         )
 
 target_link_libraries(${PROJECT_NAME} vrpn quat Threads::Threads )

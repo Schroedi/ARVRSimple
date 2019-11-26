@@ -14,3 +14,4 @@ Thumbs.db
 .cquery_cached_index
 .idea
 compile_commands.json
+cmake-build*

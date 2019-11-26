@@ -1,0 +1,2 @@
+- adjustable IPD
+- variable powerwall size/position
