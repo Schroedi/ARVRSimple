@@ -88,7 +88,7 @@ godot_bool godot_arvr_initialize(void *p_data) {
     // init vrpn
     /* TODO: make tracker name variable -> attribute with onchange? */
     //arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
-    arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "UserA@tcp:134.102.222.87");
+    arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "UserB@tcp:134.102.222.124");
     if(arvr_data->vrpnTracker == NULL){
         std::cout << "vrpnServer() Error: trackerVrpnServer could not be created" << std::endl;
     }
@@ -145,12 +145,12 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     api->godot_transform_new_identity(&transform_for_eye);
     if (p_eye == 1) {
         // left eye
-        api->godot_vector3_new(&offset, -arvr_data->iod_cm * 0.01 * 0.5 * world_scale, 0.0, 0.0);
+        api->godot_vector3_new(&offset, -arvr_data->iod_cm * godot_tracking_scale * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
         transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
     } else if (p_eye == 2) {
         // right eye
-        api->godot_vector3_new(&offset, arvr_data->iod_cm * 0.01 * 0.5 * world_scale, 0.0, 0.0);
+        api->godot_vector3_new(&offset, arvr_data->iod_cm * godot_tracking_scale * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
         transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
     } else {
@@ -295,12 +295,12 @@ void encode_in_projection(void *p_data, godot_real *p_projection, godot_int p_ey
     api->godot_transform_new_identity(&transform_for_eye);
     if (p_eye == 1) {
         // left eye
-        api->godot_vector3_new(&offset, -arvr_data->iod_cm * 0.01 * 0.5 * world_scale, 0.0, 0.0);
+        api->godot_vector3_new(&offset, -arvr_data->iod_cm * godot_tracking_scale * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
         transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
     } else if (p_eye == 2) {
         // right eye
-        api->godot_vector3_new(&offset, arvr_data->iod_cm * 0.01 * 0.5 * world_scale, 0.0, 0.0);
+        api->godot_vector3_new(&offset, arvr_data->iod_cm * godot_tracking_scale * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
         transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
     } else {

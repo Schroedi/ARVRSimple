@@ -12,9 +12,10 @@ func _ready():
 		print("Could not start powerwall interface")
 	
 	#OS.window_position = Vector2(1920, 0)
-	OS.window_position = Vector2(0, 0)
-	OS.window_size = Vector2(2560*2	, 1600)
+	#OS.window_position = Vector2(0, 0)
+	#OS.window_size = Vector2(2560*2	, 1600)
 	#OS.window_size = Vector2(1500	, 1000)
 
 func _process(delta):
+	print("proc")
 	pass

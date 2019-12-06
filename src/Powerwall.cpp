@@ -75,7 +75,7 @@ void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle) {
 
 
 GDCALLINGCONV godot_variant powerwall_config_get_edge_adjust(godot_object *p_instance, void *p_method_data,
-    void *p_user_data, int p_num_args, godot_variant **p_args) {
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
     godot_variant ret;
 
     if (p_user_data == NULL) {
@@ -90,7 +90,7 @@ GDCALLINGCONV godot_variant powerwall_config_get_edge_adjust(godot_object *p_ins
 }
 
 GDCALLINGCONV godot_variant powerwall_config_set_edge_adjust(godot_object *p_instance, void *p_method_data,
-    void *p_user_data, int p_num_args, godot_variant **p_args) {
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
     godot_variant ret;
 
     if (p_user_data == NULL) {
@@ -104,6 +104,42 @@ GDCALLINGCONV godot_variant powerwall_config_set_edge_adjust(godot_object *p_ins
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         arvr_data->enable_edge_adjust = new_value;
         std::cout << "Setting edge adjust to " << new_value << std::endl;
+        api->godot_variant_new_bool(&ret, true);
+    }
+
+    return ret;
+}
+
+GDCALLINGCONV godot_variant powerwall_config_get_tracker_url(godot_object *p_instance, void *p_method_data,
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        api->godot_variant_new_string(&ret, &arvr_data->tracker_url);
+    }
+
+    return ret;
+}
+
+GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_instance, void *p_method_data,
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else if (p_num_args == 0) {
+        // no arguments given
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        godot_string new_value = api->godot_variant_as_string(p_args[0]);
+        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        arvr_data->tracker_url = new_value;
+        std::cout << "Setting tracker url to " << new_value << std::endl;
         api->godot_variant_new_bool(&ret, true);
     }
 
