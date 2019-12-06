@@ -7,12 +7,12 @@ reloadable=false
 
 [entry]
 
-X11.64="res://addons/powerwall/bin/x11/libpowerwall.so"
+OSX.64="res://addons/powerwall/bin/x11/libpowerwall.dylib"
 Windows.64="res://addons/powerwall/bin/win64/powerwall.dll"
-OSX.64="res://addons/powerwall/bin/osx/libpowerwall.dylib"
+X11.64="res://addons/powerwall/bin/x11/libpowerwall.so"
 
 [dependencies]
 
-X11.64=[  ]
-Windows=[  ]
 OSX.64=[  ]
+Windows.64=[  ]
+X11.64=[  ]
