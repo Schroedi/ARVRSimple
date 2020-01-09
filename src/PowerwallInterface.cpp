@@ -92,8 +92,14 @@ godot_bool godot_arvr_initialize(void *p_data) {
     if(arvr_data->vrpnTracker == NULL){
         std::cout << "vrpnServer() Error: trackerVrpnServer could not be created" << std::endl;
     }
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, 0);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, 1.7);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, 3);
 
-    arvr_data->vrpnTracker->register_change_handler(p_data, tracker_callback);
+    api->godot_quat_set_x(&arvr_data->re, 1);
+    api->godot_quat_set_y(&arvr_data->re, 0);
+    api->godot_quat_set_z(&arvr_data->re, 0);
+    api->godot_quat_set_w(&arvr_data->re, 0);
 
     // and return our result
     ret = arvr_data->is_initialised;

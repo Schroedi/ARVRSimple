@@ -139,7 +139,7 @@ GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_ins
         godot_string new_value = api->godot_variant_as_string(p_args[0]);
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         arvr_data->tracker_url = new_value;
-        std::cout << "Setting tracker url to " << new_value << std::endl;
+        api->godot_print(&new_value);
         api->godot_variant_new_bool(&ret, true);
     }
 
