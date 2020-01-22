@@ -11,12 +11,11 @@
 #include <vrpn_Tracker.h>
 #include "GodotCalls.h"
 
-float godot_tracking_scale = 0.1;
 
 typedef struct arvr_data_struct {
     godot_object * instance;
     bool is_initialised;
-    float iod_cm;
+    float iod_m;
 
     vrpn_Tracker_Remote *vrpnTracker;
 
@@ -31,7 +30,9 @@ typedef struct arvr_data_struct {
     // near and far clip
     float n, f;
     godot_bool enable_edge_adjust;
+    godot_bool enable_edge_normal_debug;
     godot_string tracker_url;
+    int debug_eye;
 } arvr_data_struct;
 
 extern arvr_data_struct *arvr_data;

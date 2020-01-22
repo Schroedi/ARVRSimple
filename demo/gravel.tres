@@ -3,6 +3,6 @@
 [ext_resource path="res://Checker.png" type="Texture" id=1]
 
 [resource]
-params_cull_mode = 2
 albedo_texture = ExtResource( 1 )
+roughness = 0.92
 uv1_scale = Vector3( 150, 150, 500 )

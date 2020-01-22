@@ -5,3 +5,5 @@
 [node name="ARVROrigin" type="ARVROrigin"]
 
 [node name="ARVRCamera" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
+far = 1499.7
