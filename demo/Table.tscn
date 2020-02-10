@@ -35,31 +35,31 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
 [node name="Leg1" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.204891, 0.5 )
 visible = false
-extra_cull_margin = 8045.71
+extra_cull_margin = 1000.0
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Leg2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.204891, 0.5 )
 visible = false
-extra_cull_margin = 8045.71
+extra_cull_margin = 1000.0
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Leg3" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.204891, -0.5 )
-extra_cull_margin = 8045.71
+extra_cull_margin = 1000.0
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Leg4" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.204891, -0.5 )
-extra_cull_margin = 8045.71
+extra_cull_margin = 1000.0
 mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Surface" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0 )
-extra_cull_margin = 6950.79
+extra_cull_margin = 1000.0
 mesh = SubResource( 4 )
 material/0 = null

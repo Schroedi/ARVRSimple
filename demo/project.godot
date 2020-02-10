@@ -25,10 +25,8 @@ settings/stdout/print_fps=true
 
 [display]
 
-window/size/width=5120
-window/size/height=1600
-window/size/resizable=false
-window/size/borderless=true
+window/size/width=1920
+window/size/height=1080
 
 [gdnative]
 
@@ -49,9 +47,4 @@ edge_mode={
 
 [rendering]
 
-quality/filters/anisotropic_filter_level=8
-quality/directional_shadow/size=8192
-quality/shadow_atlas/size=8192
-quality/shadows/filter_mode=2
-quality/filters/msaa=4
 environment/default_environment="res://default_env.tres"
