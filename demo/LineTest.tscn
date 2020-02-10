@@ -1,10 +1,10 @@
 [gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
-[ext_resource path="res://Table.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=2]
 [ext_resource path="res://checker_shader.shader" type="Shader" id=3]
 [ext_resource path="res://gravel.tres" type="Material" id=4]
-[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Table.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Fps.gd" type="Script" id=6]
 
 [sub_resource type="ProceduralSky" id=1]
@@ -17,7 +17,6 @@ background_sky = SubResource( 1 )
 background_color = Color( 0, 0.53833, 0.703125, 1 )
 ambient_light_color = Color( 0.328125, 0.328125, 0.328125, 1 )
 tonemap_mode = 1
-auto_exposure_enabled = true
 ssao_quality = 2
 ssao_blur = 1
 
@@ -32,8 +31,8 @@ subdivide_depth = 10
 [sub_resource type="PlaneMesh" id=5]
 material = ExtResource( 4 )
 size = Vector2( 100, 100 )
-subdivide_width = 10
-subdivide_depth = 10
+subdivide_width = 100
+subdivide_depth = 100
 
 [sub_resource type="CubeMesh" id=6]
 size = Vector3( 0.01, 0.26, 10 )
@@ -46,7 +45,7 @@ flags_vertex_lighting = true
 size = Vector3( 0.01, 0.1, 10 )
 subdivide_width = 5
 subdivide_height = 5
-subdivide_depth = 32
+subdivide_depth = 512
 
 [sub_resource type="CubeMesh" id=9]
 size = Vector3( 5, 3, 0.1 )
@@ -67,7 +66,7 @@ shadow_enabled = true
 shadow_bias = 0.05
 directional_shadow_max_distance = 50.0
 
-[node name="ARVROrigin" parent="." instance=ExtResource( 5 )]
+[node name="ARVROrigin" parent="." instance=ExtResource( 2 )]
 
 [node name="Ground" type="MeshInstance" parent="."]
 transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
@@ -81,7 +80,7 @@ extra_cull_margin = 1000.0
 mesh = SubResource( 5 )
 material/0 = null
 
-[node name="Table2" parent="." instance=ExtResource( 2 )]
+[node name="Table2" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00687657, 0.179059, -0.364813 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]

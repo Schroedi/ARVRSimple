@@ -17,6 +17,7 @@ subdivide_depth = 3
 
 [sub_resource type="SpatialMaterial" id=3]
 resource_name = "TableMat"
+flags_vertex_lighting = true
 params_diffuse_mode = 1
 albedo_color = Color( 0.886275, 0.0431373, 0.0431373, 1 )
 metallic = 0.4
@@ -25,9 +26,9 @@ roughness = 0.0
 [sub_resource type="CubeMesh" id=4]
 material = SubResource( 3 )
 size = Vector3( 2.2, 0.1, 1.2 )
-subdivide_width = 3
-subdivide_height = 3
-subdivide_depth = 3
+subdivide_width = 30
+subdivide_height = 30
+subdivide_depth = 30
 
 [node name="Table" type="Spatial"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
