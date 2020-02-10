@@ -1,16 +1,14 @@
 extends Spatial
 
-#var powerwall = preload("res://addons/powerwall/powerwall.gdns").new()
+var powerwall = preload("res://addons/powerwall/powerwall.gdns").new()
 
 func _ready():
-#	# in ARVROrigin.Camera now
-#	# Find the interface
-#	var arvr_interface = ARVRServer.find_interface("Powerwall")
-#	if arvr_interface and arvr_interface.initialize():
-#		get_viewport().arvr = true
-#	else:
-#		print("Could not start powerwall interface")
-	pass
+	# Find the interface
+	var arvr_interface = ARVRServer.find_interface("Powerwall")
+	if arvr_interface and arvr_interface.initialize():
+		get_viewport().arvr = true
+	else:
+		print("Could not start powerwall interface")
 	
 
 func _process(delta):
@@ -20,5 +18,17 @@ func _process(delta):
 	elif (Input.is_key_pressed(KEY_SPACE)):
 		# Calling center_on_hmd will cause the ARVRServer to adjust all tracking data so the player is centered on the origin point looking forward
 		ARVRServer.center_on_hmd(true, true)
-#	elif (Input.is_action_just_pressed("edge_mode")):
-#		$MeshInstance4.visible = powerwall.get_edge_adjust()
+	elif (Input.is_action_just_pressed("edge_mode")):
+		powerwall.set_edge_adjust(not powerwall.get_edge_adjust())
+
+	# We minipulate our origin point to move around. Note that with roomscale tracking a little more then this is needed
+	# because we'll rotate around our origin point, not around our player. But that is a subject for another day.
+	if (Input.is_key_pressed(KEY_LEFT)):
+		$ARVROrigin.rotation.y += delta
+	elif (Input.is_key_pressed(KEY_RIGHT)):
+		$ARVROrigin.rotation.y -= delta
+
+	if (Input.is_key_pressed(KEY_UP)):
+		$ARVROrigin.translation -= $ARVROrigin.transform.basis.z * delta;
+	elif (Input.is_key_pressed(KEY_DOWN)):
+		$ARVROrigin.translation += $ARVROrigin.transform.basis.z * delta;

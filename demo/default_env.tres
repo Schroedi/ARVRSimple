@@ -12,3 +12,4 @@ ground_curve = 0.01
 background_mode = 2
 background_sky = SubResource( 1 )
 ssao_blur = 1
+
