@@ -94,10 +94,10 @@ GDCALLINGCONV godot_variant powerwall_config_get_edge_adjust(godot_object *p_ins
 
     if (p_user_data == NULL) {
         // this should never ever ever ever happen, just being paranoid....
-        api->godot_variant_new_bool(&ret, false);
+        api->godot_variant_new_int(&ret, 0);
     } else {
         auto *arvr_data = (arvr_data_struct *)p_user_data;
-        api->godot_variant_new_bool(&ret, arvr_data->enable_edge_adjust);
+        api->godot_variant_new_int(&ret, arvr_data->enable_edge_adjust);
     }
 
     return ret;
@@ -114,7 +114,7 @@ GDCALLINGCONV godot_variant powerwall_config_set_edge_adjust(godot_object *p_ins
         // no arguments given
         api->godot_variant_new_bool(&ret, false);
     } else {
-        bool new_value = api->godot_variant_as_bool(p_args[0]);
+        int new_value = api->godot_variant_as_int(p_args[0]);
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         arvr_data->enable_edge_adjust = new_value;
         std::cout << "Setting edge adjust to " << new_value << std::endl;

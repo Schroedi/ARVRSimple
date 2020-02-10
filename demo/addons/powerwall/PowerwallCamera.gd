@@ -11,15 +11,21 @@ func _ready():
 	else:
 		print("Could not start powerwall interface")
 	
-	#OS.window_position = Vector2(1920, 0)
+	OS.window_position = Vector2(1920, 0)
 	#OS.window_position = Vector2(0, 0)
-	#OS.window_size = Vector2(2560*2	, 1600)
+	OS.window_size = Vector2(2560*2	, 1600)
 	#OS.window_size = Vector2(1500	, 1000)
 	pass
 
 func _process(delta):
 	if (Input.is_action_just_pressed("edge_mode")):
-		powerwall.set_edge_adjust(not powerwall.get_edge_adjust())
+		var curr = powerwall.get_edge_adjust()
+		curr = curr ^ 0x1
+		print(powerwall.set_edge_adjust(curr))
+	if (Input.is_action_just_pressed("edge_debug")):
+		var curr = powerwall.get_edge_adjust()
+		curr = curr ^ 0x2
+		print(powerwall.set_edge_adjust(curr))
 		
 	# debug movement
 	if (Input.is_key_pressed(KEY_LEFT)):

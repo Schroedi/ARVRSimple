@@ -11,7 +11,7 @@
 #include <iostream>
 
 bool swap_eyes = true;
-bool enable_vrpn = false;
+bool enable_vrpn = true;
 
 arvr_data_struct *arvr_data = nullptr;
 
@@ -99,7 +99,7 @@ godot_bool godot_arvr_initialize(void *p_data) {
     /* TODO: make tracker name variable -> attribute with onchange? */
     if (enable_vrpn) {
         //arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
-        arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "UserB@tcp:134.102.222.124");
+        arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "UserA@tcp:134.102.222.124");
         if(arvr_data->vrpnTracker == NULL){
             std::cout << "vrpnServer() Error: trackerVrpnServer could not be created" << std::endl;
         }
@@ -116,9 +116,7 @@ void godot_arvr_uninitialize(void *p_data) {
 
     if (arvr_data->is_initialised) {
         // note, this will already be removed as the primary interface by ARVRInterfaceGDNative
-
         // cleanup if needed
-
         arvr_data->is_initialised = false;
     }
 }
@@ -128,8 +126,8 @@ godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
 
     //printf("Powerwall.arvr_get_recommended_render_targetsize()\n");
 
-    //api->godot_vector2_new(&size, 5120, 1600);
-    api->godot_vector2_new(&size, 750, 500);
+    api->godot_vector2_new(&size, 2560, 1600);
+    //api->godot_vector2_new(&size, 750, 500);
 
     return size;
 }
@@ -183,8 +181,6 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
     ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
     ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
-
-    arvr_api->godot_pw_set_offset(&offset);
 
     return ret;
 }
@@ -330,15 +326,15 @@ void encode_in_projection(void *p_data, godot_real *p_projection, godot_int p_ey
     p_projection[7]  = api->godot_vector3_get_axis(&offset, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
     p_projection[11] = api->godot_vector3_get_axis(&offset, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
 
-    if (arvr_data->enable_edge_adjust) {
-        // indicate edge adjust to shader
-        p_projection[15] = 1;
-    } else if (arvr_data->enable_edge_normal_debug) {
-        p_projection[15] = 2.1;
-    } else {
-        p_projection[15] = 0;
-    }
-    p_projection[15];
+//    if (arvr_data->enable_edge_adjust) {
+//        // indicate edge adjust to shader
+//        p_projection[15] = 1;
+//    } else if (arvr_data->enable_edge_normal_debug) {
+//        p_projection[15] = 2.1;
+//    } else {
+//        p_projection[15] = 0;
+//    }
+//    p_projection[15];
 }
 
 void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
@@ -407,6 +403,22 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
     // back to opengl
     TransformToCam(P, p_projection);
+
+    godot_vector3 offset;
+    godot_basis head_rotation;
+    godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
+    //api->godot_basis_new_with_euler(&head_rotation, &arvr_data->re);
+    api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
+    if (p_eye == 1) {
+        // left eye
+        api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+        offset = api->godot_basis_xform(&head_rotation, &offset);
+    } else if (p_eye == 2) {
+        // right eye
+        api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+        offset = api->godot_basis_xform(&head_rotation, &offset);
+    }
+    arvr_api->godot_pw_set_offset(&offset);
 }
 
 godot_int godot_arvr_get_external_texture_for_eye(void *p_data, godot_int p_eye) {
@@ -433,7 +445,7 @@ void godot_arvr_process(void *p_data) {
         arvr_data->vrpnTracker->mainloop();
     }
 
-    arvr_api->godot_pw_set_mode(arvr_data->enable_edge_adjust ? 1 : 0);
+    arvr_api->godot_pw_set_mode(arvr_data->enable_edge_adjust);
     arvr_api->godot_pw_set_pa(&arvr_data->pa);
     arvr_api->godot_pw_set_pb(&arvr_data->pb);
     arvr_api->godot_pw_set_pc(&arvr_data->pc);
@@ -469,7 +481,7 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     arvr_data->is_initialised = false;
     // *x for debugging
     arvr_data->iod_m = 2 * 6.1 / 100.0;
-    arvr_data->enable_edge_adjust = false;
+    arvr_data->enable_edge_adjust = 0;
     arvr_data->enable_edge_normal_debug = false;
     arvr_data->vrpnTracker = nullptr;
 
