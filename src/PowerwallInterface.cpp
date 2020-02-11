@@ -276,67 +276,6 @@ void TransformToCam(const godot_transform& in, godot_real *p_projection) {
     p_projection[15] = 0;
 }
 
-void encode_in_projection(void *p_data, godot_real *p_projection, godot_int p_eye) {
-    auto *arvr_data = (arvr_data_struct *)p_data;
-    p_projection[0] = api->godot_vector3_get_axis(&arvr_data->pa, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[1] = api->godot_vector3_get_axis(&arvr_data->pa, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[2] = api->godot_vector3_get_axis(&arvr_data->pa, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-
-    p_projection[4] = api->godot_vector3_get_axis(&arvr_data->pb, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[5] = api->godot_vector3_get_axis(&arvr_data->pb, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[6] = api->godot_vector3_get_axis(&arvr_data->pb, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-
-    p_projection[8]  = api->godot_vector3_get_axis(&arvr_data->pc, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[9]  = api->godot_vector3_get_axis(&arvr_data->pc, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[10] = api->godot_vector3_get_axis(&arvr_data->pc, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-
-    p_projection[12] = api->godot_vector3_get_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[13] = api->godot_vector3_get_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[14] = api->godot_vector3_get_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-
-
-    godot_transform hmd_transform;
-    godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
-    godot_vector3 offset;
-    // Currently we only support 1to1 scaling.
-    godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
-
-    godot_basis head_rotation;
-    //api->godot_basis_new_with_euler(&head_rotation, &arvr_data->re);
-    api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
-
-    if (p_eye == 1) {
-        // left eye
-        api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-        offset = api->godot_basis_xform(&head_rotation, &offset);
-    } else if (p_eye == 2) {
-        // right eye
-        api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-        offset = api->godot_basis_xform(&head_rotation, &offset);
-    } else {
-        // leave in the middle, mono
-    }
-
-    // now determine our HMD positional tracking
-    api->godot_transform_new_identity(&hmd_transform);
-    hmd_transform = api->godot_transform_translated(&hmd_transform, &arvr_data->pe);
-
-    // FIXME: CS: godot's reference frame is missing here
-    p_projection[3]  = api->godot_vector3_get_axis(&offset, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[7]  = api->godot_vector3_get_axis(&offset, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[11] = api->godot_vector3_get_axis(&offset, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-
-//    if (arvr_data->enable_edge_adjust) {
-//        // indicate edge adjust to shader
-//        p_projection[15] = 1;
-//    } else if (arvr_data->enable_edge_normal_debug) {
-//        p_projection[15] = 2.1;
-//    } else {
-//        p_projection[15] = 0;
-//    }
-//    p_projection[15];
-}
-
 void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
                                         godot_int p_eye, godot_real p_aspect,
                                         godot_real p_z_near,
@@ -482,7 +421,6 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     // *x for debugging
     arvr_data->iod_m = 2 * 6.1 / 100.0;
     arvr_data->enable_edge_adjust = 0;
-    arvr_data->enable_edge_normal_debug = false;
     arvr_data->vrpnTracker = nullptr;
 
     // projection screen coordinates - these are updated in the arvr-process method

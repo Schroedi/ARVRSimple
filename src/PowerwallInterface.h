@@ -30,7 +30,6 @@ typedef struct arvr_data_struct {
     // near and far clip
     float n, f;
     godot_int enable_edge_adjust;
-    godot_bool enable_edge_normal_debug;
     godot_string tracker_url;
 } arvr_data_struct;
 
