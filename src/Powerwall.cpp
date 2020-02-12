@@ -138,3 +138,96 @@ GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_ins
 
     return ret;
 }
+
+/*GDCALLINGCONV godot_variant powerwall_get_eye_projection(godot_object *p_instance, void *p_method_data,
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else if (p_num_args == 0) {
+        // no arguments given
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        godot_int eye = api->godot_variant_as_int(p_args[0]);
+        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        godot_real projection[16];
+        float aspect = 1; // not used
+        float near = 0.1;
+        float far = 500;
+        godot_arvr_fill_projection_for_eye(arvr_data, projection, eye, aspect, near, far);
+
+
+        //api->godot_variant_new_pool_real_array(&ret, &arvr_data->tracker_url);
+    }
+
+    return ret;
+}*/
+
+
+GDCALLINGCONV godot_variant powerwall_get_head_transform(godot_object *p_instance, void *p_method_data,
+                                                         void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else if (p_num_args == 0) {
+        // no arguments given
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        godot_int eye = api->godot_variant_as_int(p_args[0]);
+        auto *arvr_data = (arvr_data_struct *) p_user_data;
+        godot_transform eye_transform;
+        godot_arvr_get_transform_for_eye(arvr_data, eye, &eye_transform);
+        api->godot_variant_new_transform(&ret, &eye_transform);
+    }
+
+    return ret;
+}
+
+/*
+GDCALLINGCONV godot_variant powerwall_set_head_transform(godot_object *p_instance, void *p_method_data,
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else if (p_num_args == 0) {
+        // no arguments given
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        godot_transform transform = api->godot_variant_as_transform(p_args[0]);
+        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        // FIXME: overwrite transform, set overwrite to true and save transform
+        //arvr_data->enable_edge_adjust = new_value;
+        std::cout << "Setting transform " << std::endl;
+        api->godot_variant_new_bool(&ret, true);
+    }
+
+    return ret;
+}*/
+
+GDCALLINGCONV godot_variant powerwall_config_set_ipd(godot_object *p_instance, void *p_method_data,
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else if (p_num_args == 0) {
+        // no arguments given
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        godot_real new_value = api->godot_variant_as_real(p_args[0]);
+        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        arvr_data->iod_m = new_value;
+        std::cout << "Setting edge ipd to " << new_value << std::endl;
+        api->godot_variant_new_bool(&ret, true);
+    }
+
+    return ret;
+}
