@@ -64,6 +64,14 @@ void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle) {
         nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "get_edge_adjust",
                                                              attributes, get_data);
     }
+
+    {
+        godot_instance_method get_data = {NULL, NULL, NULL};
+        get_data.method = &powerwall_get_head_transform;
+        godot_method_attributes attributes = {GODOT_METHOD_RPC_MODE_DISABLED};
+        nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "get_head_transform",
+                                                             attributes, get_data);
+    }
 }
 
 
@@ -170,7 +178,6 @@ GDCALLINGCONV godot_variant powerwall_get_head_transform(godot_object *p_instanc
                                                          void *p_user_data, int p_num_args, godot_variant **p_args) {
     godot_variant ret;
 
-
     if (p_user_data == NULL) {
         // this should never ever ever ever happen, just being paranoid....
         api->godot_variant_new_bool(&ret, false);
@@ -180,9 +187,14 @@ GDCALLINGCONV godot_variant powerwall_get_head_transform(godot_object *p_instanc
     } else {
         godot_int eye = api->godot_variant_as_int(p_args[0]);
         auto *arvr_data = (arvr_data_struct *) p_user_data;
-        godot_transform eye_transform;
-        godot_arvr_get_transform_for_eye(arvr_data, eye, &eye_transform);
-        api->godot_variant_new_transform(&ret, &eye_transform);
+
+        godot_basis head_rotation;
+        api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
+
+        godot_transform head_transform;
+        api->godot_transform_new(&head_transform, &head_rotation, &arvr_data->pe);
+
+        api->godot_variant_new_transform(&ret, &head_transform);
     }
 
     return ret;
