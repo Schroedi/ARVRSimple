@@ -50,6 +50,7 @@ void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle) {
                                                         create, destroy);
 
     // Methods
+    // edge mode
     {
         godot_instance_method get_data = {NULL, NULL, NULL};
         get_data.method = &powerwall_config_set_edge_adjust;
@@ -65,11 +66,21 @@ void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle) {
                                                              attributes, get_data);
     }
 
+    // head transform
     {
         godot_instance_method get_data = {NULL, NULL, NULL};
         get_data.method = &powerwall_get_head_transform;
         godot_method_attributes attributes = {GODOT_METHOD_RPC_MODE_DISABLED};
         nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "get_head_transform",
+                                                             attributes, get_data);
+    }
+
+    // ipd
+    {
+        godot_instance_method get_data = {NULL, NULL, NULL};
+        get_data.method = &powerwall_config_set_ipd;
+        godot_method_attributes attributes = {GODOT_METHOD_RPC_MODE_DISABLED};
+        nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "set_ipd",
                                                              attributes, get_data);
     }
 }
