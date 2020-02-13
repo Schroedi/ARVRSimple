@@ -59,4 +59,5 @@ w_debug={
 
 [rendering]
 
+quality/depth_prepass/enable=false
 environment/default_environment="res://default_env.tres"

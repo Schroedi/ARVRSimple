@@ -77,7 +77,8 @@ target_include_directories(${PROJECT_NAME}
         src
         )
 
-set(GODOT_HEADERS_DIR "/Users/ascadian/Projects/ZPP/godot/modules/gdnative/include")
+#set(GODOT_HEADERS_DIR "/Users/ascadian/Projects/ZPP/godot/modules/gdnative/include")
+set(GODOT_HEADERS_DIR "/home/ascadian/Porwewall/godot/modules/gdnative/include")
 #set(GODOT_HEADERS_DIR "${CMAKE_SOURCE_DIR}/godot_headers")
 
 # Put godot headers as SYSTEM PUBLIC to exclude warnings from irrelevant headers
