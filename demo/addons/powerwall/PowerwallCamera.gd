@@ -8,16 +8,18 @@ func _ready():
 	var arvr_interface = ARVRServer.find_interface("Powerwall")
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
+		powerwall.set_tracker_url("UserB@tcp:134.102.222.124")
 	else:
 		print("Could not start powerwall interface")
 	
-	OS.window_position = Vector2(1920, 0)
+	OS.window_position = Vector2(2560, 0)
 	#OS.window_position = Vector2(0, 0)
 	OS.window_size = Vector2(2560*2	, 1600)
 	#OS.window_size = Vector2(1500	, 1000)
 	pass
 
 func _process(delta):
+	var head_trans = powerwall.get_head_transform(0)
 	if (Input.is_action_just_pressed("edge_mode")):
 		var curr = powerwall.get_edge_adjust()
 		curr = curr ^ 0x1

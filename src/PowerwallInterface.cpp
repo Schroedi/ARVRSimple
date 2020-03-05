@@ -10,27 +10,11 @@
 #include <cassert>
 #include <iostream>
 
-bool swap_eyes = true;
-bool enable_vrpn = true;
-
 arvr_data_struct *arvr_data = nullptr;
 
 namespace {
 const char *kName = "Powerwall";
 } // namespace
-
-void VRPN_CALLBACK tracker_callback(void* p_data, const vrpn_TRACKERCB t ){
-    auto *arvr_data = (arvr_data_struct *)p_data;
-
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, t.pos[0]);
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, t.pos[2]);
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, -t.pos[1]);
-
-    api->godot_quat_set_x(&arvr_data->re, t.quat[0]);
-    api->godot_quat_set_y(&arvr_data->re, t.quat[2]);
-    api->godot_quat_set_z(&arvr_data->re, t.quat[1]);
-    api->godot_quat_set_w(&arvr_data->re, t.quat[3]);
-}
 
 godot_string godot_arvr_get_name(const void *p_data) {
     godot_string ret;
@@ -93,17 +77,11 @@ godot_bool godot_arvr_initialize(void *p_data) {
 
         // note, this will be made the primary interface by ARVRInterfaceGDNative
         arvr_data->is_initialised = true;
-    }
 
-    // init vrpn
-    /* TODO: make tracker name variable -> attribute with onchange? */
-    if (enable_vrpn) {
-        //arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
-        arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "UserA@tcp:134.102.222.124");
-        if(arvr_data->vrpnTracker == NULL){
-            std::cout << "vrpnServer() Error: trackerVrpnServer could not be created" << std::endl;
-        }
-        arvr_data->vrpnTracker->register_change_handler(p_data, tracker_callback);
+        api->godot_string_new(&arvr_data->tracker_url);
+        arvr_data->vrpnTracker = nullptr;
+
+        arvr_data->swap_eyes = false;
     }
 
     // and return our result
@@ -371,7 +349,7 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // "Invalid arvr data.");
     assert(p_eye != /* EYE_MONO */ 0); // "Mono rendering is not supported.");
-    if (swap_eyes)
+    if (arvr_data->swap_eyes)
         p_eye = p_eye == 1 ? 2 : 1;
     arvr_api->godot_arvr_blit(p_eye, p_render_target, p_screen_rect);
 }
@@ -380,7 +358,7 @@ void godot_arvr_process(void *p_data) {
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // "Invalid arvr data.");
 
-    if (enable_vrpn) {
+    if (arvr_data->vrpnTracker) {
         arvr_data->vrpnTracker->mainloop();
     }
 
@@ -439,7 +417,7 @@ void godot_arvr_destructor(void *p_data) {
     if (p_data != nullptr) {
         auto *arvr_data = (arvr_data_struct *)p_data;
 
-        if (enable_vrpn) {
+        if (arvr_data->vrpnTracker) {
             delete arvr_data->vrpnTracker;
         }
 

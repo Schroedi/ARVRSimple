@@ -18,7 +18,7 @@ typedef struct arvr_data_struct {
     float iod_m;
 
     vrpn_Tracker_Remote *vrpnTracker;
-
+    godot_bool swap_eyes;
     godot_vector3 va, vb, vc;
     godot_vector3 vr, vu, vn;
     // projection screen coordinates

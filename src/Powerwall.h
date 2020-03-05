@@ -33,6 +33,7 @@ GDCALLINGCONV godot_variant powerwall_get_head_transform(godot_object *p_instanc
 //GDCALLINGCONV godot_variant powerwall_config_get_ipd(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 GDCALLINGCONV godot_variant powerwall_config_set_ipd(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 
+GDCALLINGCONV godot_variant powerwall_config_set_swap_eyes(godot_object *p_instance, void *p_method_data, void *p_user_data, int p_num_args, godot_variant **p_args);
 
 #ifdef __cplusplus
 }

@@ -83,6 +83,24 @@ void GDN_EXPORT godot_powerwall_nativescript_init(void *p_handle) {
         nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "set_ipd",
                                                              attributes, get_data);
     }
+
+    // tracker
+    {
+        godot_instance_method get_data = {NULL, NULL, NULL};
+        get_data.method = &powerwall_config_set_tracker_url;
+        godot_method_attributes attributes = {GODOT_METHOD_RPC_MODE_DISABLED};
+        nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "set_tracker_url",
+                                                             attributes, get_data);
+    }
+
+    // swap_eyes
+    {
+        godot_instance_method get_data = {NULL, NULL, NULL};
+        get_data.method = &powerwall_config_set_swap_eyes;
+        godot_method_attributes attributes = {GODOT_METHOD_RPC_MODE_DISABLED};
+        nativescript_api->godot_nativescript_register_method(p_handle, "Powerwall", "set_swap_eyes",
+                                                             attributes, get_data);
+    }
 }
 
 
@@ -137,6 +155,19 @@ GDCALLINGCONV godot_variant powerwall_config_get_tracker_url(godot_object *p_ins
     return ret;
 }
 
+void VRPN_CALLBACK tracker_callback(void* p_data, const vrpn_TRACKERCB t ){
+    auto *arvr_data = (arvr_data_struct *)p_data;
+
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, t.pos[0]);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, t.pos[2]);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, -t.pos[1]);
+
+    api->godot_quat_set_x(&arvr_data->re, t.quat[0]);
+    api->godot_quat_set_y(&arvr_data->re, t.quat[2]);
+    api->godot_quat_set_z(&arvr_data->re, t.quat[1]);
+    api->godot_quat_set_w(&arvr_data->re, t.quat[3]);
+}
+
 GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_instance, void *p_method_data,
                                                              void *p_user_data, int p_num_args, godot_variant **p_args) {
     godot_variant ret;
@@ -152,6 +183,24 @@ GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_ins
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         arvr_data->tracker_url = new_value;
         api->godot_print(&new_value);
+
+        // init vrpn
+        /* TODO: make tracker name variable -> attribute with onchange? */
+        //arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
+
+        if (arvr_data->vrpnTracker) {
+            arvr_data->vrpnTracker->unregister_change_handler(p_user_data, tracker_callback);
+            delete arvr_data->vrpnTracker;
+            arvr_data->vrpnTracker = nullptr;
+        }
+        godot_char_string char_string = godot_string_utf8(&arvr_data->tracker_url);
+        arvr_data->vrpnTracker = new vrpn_Tracker_Remote(godot_char_string_get_data(&char_string) );
+        if(arvr_data->vrpnTracker == nullptr){
+            std::cout << "vrpnServer() Error: trackerVrpnServer could not be created" << std::endl;
+        } else {
+            arvr_data->vrpnTracker->register_change_handler(p_user_data, tracker_callback);
+        }
+
         api->godot_variant_new_bool(&ret, true);
     }
 
@@ -249,6 +298,26 @@ GDCALLINGCONV godot_variant powerwall_config_set_ipd(godot_object *p_instance, v
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         arvr_data->iod_m = new_value;
         std::cout << "Setting edge ipd to " << new_value << std::endl;
+        api->godot_variant_new_bool(&ret, true);
+    }
+
+    return ret;
+}
+
+GDCALLINGCONV godot_variant powerwall_config_set_swap_eyes(godot_object *p_instance, void *p_method_data,
+                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+    godot_variant ret;
+
+    if (p_user_data == NULL) {
+        // this should never ever ever ever happen, just being paranoid....
+        api->godot_variant_new_bool(&ret, false);
+    } else if (p_num_args == 0) {
+        // no arguments given
+        api->godot_variant_new_bool(&ret, false);
+    } else {
+        bool new_value = api->godot_variant_as_bool(p_args[0]);
+        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        arvr_data->swap_eyes = new_value;
         api->godot_variant_new_bool(&ret, true);
     }
 
