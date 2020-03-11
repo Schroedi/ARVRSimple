@@ -3,7 +3,6 @@
 [ext_resource path="res://addons/powerwall/PowerwallCamera.gd" type="Script" id=1]
 
 [node name="ARVRCamera" type="ARVRCamera"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0 )
 fov = 65.0
 near = 0.1
 far = 500.0
