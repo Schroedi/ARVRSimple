@@ -16,6 +16,13 @@ namespace {
 const char *kName = "Powerwall";
 } // namespace
 
+void printVector(godot_vector3 *v) {
+    printf("[%f, %f, %F]\n",
+           api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
+           api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y),
+           api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z));
+}
+
 godot_string godot_arvr_get_name(const void *p_data) {
     godot_string ret;
 
@@ -198,6 +205,7 @@ void printCam(godot_real *m) {
     printf("%f %f %f %f\n", m[3],m[7], m[11], m[15]);
 }
 
+
 godot_transform camToTransform(godot_real *p_projection) {
     // Rotate the projection to be non-perpendicular.
     godot_basis basis;
@@ -287,7 +295,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     arvr_data->vc = api->godot_vector3_operator_subtract(&arvr_data->pc, &pe);
 
     // Find the distance from the eye to screen plane.
-    float d = - api->godot_vector3_dot(&arvr_data->vn, &arvr_data->va);// / 2.0;
+    float d = - api->godot_vector3_dot(&arvr_data->vn, &arvr_data->va);
 
     // Find the extent of the perpendicular projection.
     float l = api->godot_vector3_dot(&arvr_data->vr, &arvr_data->va) * n / d;
@@ -298,7 +306,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     // Load the perpendicular projection.
     arvr_set_frustum(p_projection, l, r, b, t, n, f);
 
-    // Rotate the projection to be non-perpendicular.
+    // Rotate the projection to be non-perpendicular. (needed for projection planes not alignet with the XY plane)
     godot_basis basis;
     api->godot_basis_new(&basis);
 
@@ -324,7 +332,6 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     godot_vector3 offset;
     godot_basis head_rotation;
     godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
-    //api->godot_basis_new_with_euler(&head_rotation, &arvr_data->re);
     api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
     if (p_eye == 1) {
         // left eye
