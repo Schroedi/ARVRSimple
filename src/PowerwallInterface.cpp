@@ -121,15 +121,10 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
     godot_transform ret;
 
-//    // we need to always return the correct value including tracking. otherwise, culling and lighting are wrong.
-//    if (arvr_data->enable_edge_adjust || arvr_data->enable_edge_normal_debug) {
-//        ret = *p_cam_transform;
-//        ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
-//        return *p_cam_transform;
-//    }
-
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // Invalid arvr data
+
+    arvr_data->cam_transform = *p_cam_transform;
 
     godot_transform transform_for_eye;
     godot_transform hmd_transform;
@@ -138,7 +133,6 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
 
     godot_basis head_rotation;
-    //api->godot_basis_new_with_euler(&head_rotation, &arvr_data->re);
     api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
 
     // create our transform from head center to eye
@@ -164,10 +158,13 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     // Now construct our full transform, the order may be in reverse, have to test :)
     ret = *p_cam_transform;
     ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
-    ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
-    ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
+    //ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
+    //ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
 
-    return ret;
+    godot_transform transform;
+    godot_transform_new_identity(&transform);
+
+    return transform; //ret;
 }
 
 godot_vector3 get_eye_pos(void *p_data, int p_eye) {
@@ -205,8 +202,9 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
     hmd_transform = api->godot_transform_translated(&hmd_transform, &arvr_data->pe);
 
     // Now construct our full transform, the order may be in reverse, have to test :)
-    godot_transform transform;
-    godot_transform_new_identity(&transform);
+    godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
+    godot_transform transform = arvr_data->cam_transform;
+    transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
     transform = api->godot_transform_operator_multiply(&transform, &hmd_transform);
     transform = api->godot_transform_operator_multiply(&transform, &transform_for_eye);
     godot_vector3 ret;
@@ -318,13 +316,8 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float n = p_z_near;
     float f = p_z_far;
 
-    //godot::Vector3 pe = arvr_data->pe;
-//    godot_transform eye_transf;
-//    api->godot_transform_new_identity(&eye_transf);
-//    eye_transf = godot_arvr_get_transform_for_eye(p_data, p_eye, &eye_transf);
-//    auto pe = api->godot_transform_get_origin(&eye_transf);
     godot_vector3 pe = get_eye_pos(p_data, p_eye);
-
+    printVector(&pe);
 
     // Compute an orthonormal basis for the screen.
     arvr_data->vr = api->godot_vector3_operator_subtract(&arvr_data->pb, &arvr_data->pa);
@@ -364,6 +357,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
     godot_vector3 off;
     api->godot_vector3_new(&off, 0,0,0);
+    off = api->godot_vector3_operator_subtract(&off, &pe); // use the position here or in the get eye pos function
     godot_transform Mt;
     api->godot_transform_new(&Mt, &basis, &off);
 
@@ -371,7 +365,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
     // this does not do anything if the screen is aligned with the coordinate system
     // vr, vu and vn will be [1,0,0], [0,1,0], [0,0,1]
-    P = api->godot_transform_operator_multiply(&P, &Mt);
+    P = api->godot_transform_operator_multiply(&Mt, &P);
 
     // back to opengl
     TransformToCam(P, p_projection);

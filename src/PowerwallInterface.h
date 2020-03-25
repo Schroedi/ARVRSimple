@@ -31,6 +31,8 @@ typedef struct arvr_data_struct {
     float n, f;
     godot_int enable_edge_adjust;
     godot_string tracker_url;
+    // last transform we got in godot_arvr_get_transform_for_eye
+    godot_transform cam_transform;
 } arvr_data_struct;
 
 extern arvr_data_struct *arvr_data;
