@@ -111,8 +111,8 @@ godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
 
     //printf("Powerwall.arvr_get_recommended_render_targetsize()\n");
 
-    api->godot_vector2_new(&size, 2560, 1600);
-    //api->godot_vector2_new(&size, 750, 500);
+    //api->godot_vector2_new(&size, 2560, 1600);
+    api->godot_vector2_new(&size, 1920, 1080);
 
     return size;
 }
@@ -162,7 +162,7 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     //ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
 
     godot_transform transform;
-    godot_transform_new_identity(&transform);
+    api->godot_transform_new_identity(&transform);
 
     return transform; //ret;
 }
@@ -209,7 +209,7 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
     transform = api->godot_transform_operator_multiply(&transform, &transform_for_eye);
     godot_vector3 ret;
     api->godot_vector3_new(&ret,0,0,0);
-    ret = godot_transform_xform_vector3(&transform, &ret);
+    ret = api->godot_transform_xform_vector3(&transform, &ret);
     return ret;
 }
 
@@ -317,7 +317,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float f = p_z_far;
 
     godot_vector3 pe = get_eye_pos(p_data, p_eye);
-    printVector(&pe);
+    //printVector(&pe);
 
     // Compute an orthonormal basis for the screen.
     arvr_data->vr = api->godot_vector3_operator_subtract(&arvr_data->pb, &arvr_data->pa);
