@@ -37,6 +37,8 @@ FetchContent_Declare(
         vrpn
         GIT_REPOSITORY https://github.com/vrpn/vrpn.git
         GIT_TAG        version_07.34
+        PATCH_COMMAND  
+          COMMAND echo "" > ${PROJECT_SOURCE_DIR}/_deps/vrpn-src/cmake/cmake-4.0.0-modules/RequireOutOfSourceBuild.cmake
 )
 FetchContent_MakeAvailable(vrpn)
 
@@ -77,8 +79,8 @@ target_include_directories(${PROJECT_NAME}
         src
         )
 
-#set(GODOT_HEADERS_DIR "/Users/ascadian/Projects/ZPP/godot/modules/gdnative/include")
-set(GODOT_HEADERS_DIR "/home/ascadian/Porwewall/godot/modules/gdnative/include")
+set(GODOT_HEADERS_DIR "/Users/ascadian/Projects/ZPP/godot_powerwall/modules/gdnative/include")
+#set(GODOT_HEADERS_DIR "/home/stud22/godot/modules/gdnative/include")
 #set(GODOT_HEADERS_DIR "${CMAKE_SOURCE_DIR}/godot_headers")
 
 # Put godot headers as SYSTEM PUBLIC to exclude warnings from irrelevant headers
