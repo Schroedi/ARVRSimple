@@ -2,24 +2,32 @@ extends ARVRCamera
 
 var powerwall = preload("res://addons/powerwall/powerwall.gdns").new()
 
-func _ready():
+export var debug_disable_window_position = false
+export var debug_emulate_vrpn = false
 
-	# Find the interface
+func _ready():
+	
+	
+	# Find the Powerwall interface
 	var arvr_interface = ARVRServer.find_interface("Powerwall")
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
-		powerwall.set_tracker_url("UserB@tcp:134.102.222.124")
+		if not debug_emulate_vrpn:
+			powerwall.set_tracker_url("UserB@tcp:134.102.222.124")
 	else:
 		print("Could not start powerwall interface")
 	
-	OS.window_position = Vector2(2560, 0)
-	#OS.window_position = Vector2(0, 0)
-	OS.window_size = Vector2(2560*2	, 1600)
-	#OS.window_size = Vector2(1500	, 1000)
-	pass
+	if debug_disable_window_position:
+		#OS.window_position = Vector2(0, 0)
+		#OS.window_size = Vector2(1920, 1080)
+		OS.window_borderless = false
+		pass
+	else:
+		OS.window_position = Vector2(2560, 0)
+		OS.window_size = Vector2(2560*2 , 1600)
+
 
 func _process(delta):
-	var head_trans = powerwall.get_head_transform(0)
 	if (Input.is_action_just_pressed("edge_mode")):
 		var curr = powerwall.get_edge_adjust()
 		curr = curr ^ 0x1
@@ -38,30 +46,36 @@ func _process(delta):
 			print(powerwall.set_edge_adjust(curr))
 		
 	# debug movement
-	if (Input.is_key_pressed(KEY_LEFT)):
-		get_parent().rotation.y += delta
-	elif (Input.is_key_pressed(KEY_RIGHT)):
-		get_parent().rotation.y -= delta
+#	if (Input.is_key_pressed(KEY_LEFT)):
+#		get_parent().rotation.y += delta
+#	elif (Input.is_key_pressed(KEY_RIGHT)):
+#		get_parent().rotation.y -= delta
+#
+#	if (Input.is_key_pressed(KEY_R)):
+#		get_parent().rotation.x += delta
+#	elif (Input.is_key_pressed(KEY_F)):
+#		get_parent().rotation.x -= delta
 
-	if (Input.is_key_pressed(KEY_R)):
-		get_parent().rotation.x += delta
-	elif (Input.is_key_pressed(KEY_F)):
-		get_parent().rotation.x -= delta
-
-
+	var speed = 1 if Input.is_key_pressed(KEY_SHIFT) else .5
+	
+	# height
 	if (Input.is_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_W)):
-		get_parent().translation -= get_parent().transform.basis.z * delta;
+		debug_move(Vector3.UP * speed * delta);
 	elif (Input.is_key_pressed(KEY_DOWN) or  Input.is_key_pressed(KEY_S)):
-		get_parent().translation += get_parent().transform.basis.z * delta;
+		debug_move(Vector3.DOWN * speed * delta);
 	
 	# strave
 	if (Input.is_key_pressed(KEY_A)):
-		get_parent().translation -= get_parent().transform.basis.x * delta;
+		debug_move(Vector3.LEFT * speed * delta);
 	elif (Input.is_key_pressed(KEY_D)):
-		get_parent().translation += get_parent().transform.basis.x * delta;
+		debug_move(Vector3.RIGHT * speed * delta);
+	
+	# front/back
+	if (Input.is_key_pressed(KEY_PAGEUP)):
+		debug_move(Vector3.FORWARD * speed * delta);
+	elif (Input.is_key_pressed(KEY_PAGEDOWN)):
+		debug_move(Vector3.BACK * speed * delta);
 
-	if (Input.is_key_pressed(KEY_Q)):
-		get_parent().translation -= get_parent().transform.basis.y * delta;
-	elif (Input.is_key_pressed(KEY_E)):
-		get_parent().translation += get_parent().transform.basis.y * delta;
-
+func debug_move(v:Vector3):
+	var transform:Transform = powerwall.get_head_transform()
+	powerwall.set_head_transform(transform.translated(v))
