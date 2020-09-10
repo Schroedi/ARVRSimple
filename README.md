@@ -16,3 +16,11 @@ Currently the projection seems slightly off. It looks like the rotation center i
 
 # Thanks
 This project borrows a lot from the excellent work by BastiaanOlij. Further, I would like give a special thanks to thank bojidar-bg and Karoffel who helped me tremendously with getting started at the Godot dev sprint spring 2019.
+
+
+# Input
+The camera uses the following inputs in the demo project:
+edge_mode p
+edge_debug c
+w_debug y
+trans_pro t
