@@ -79,7 +79,7 @@ target_include_directories(${PROJECT_NAME}
         src
         )
 
-set(GODOT_HEADERS_DIR "/Users/ascadian/Projects/ZPP/godot_powerwall/modules/gdnative/include")
+set(GODOT_HEADERS_DIR "/Users/ascadian/Projects/ZPP/godot_powerwall/modules/gdnative/include" CACHE PATH "found in $godot_src_dir/modules/gdnative/include")
 #set(GODOT_HEADERS_DIR "/home/stud22/godot/modules/gdnative/include")
 #set(GODOT_HEADERS_DIR "${CMAKE_SOURCE_DIR}/godot_headers")
 
