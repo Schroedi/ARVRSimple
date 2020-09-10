@@ -17,23 +17,6 @@ void GDN_EXPORT simple_destructor(godot_object *p_instance, void *p_method_data,
 
 }
 
-// instance pointer, method data, user data, num args, args - return result as varaint
-godot_variant GDN_EXPORT mytestfunction(godot_object *p_instance, void *p_method_data,
-                                        void *p_user_data, int p_num_args, godot_variant **p_args) {
-    arvr_data_struct * user_data = (arvr_data_struct *) p_user_data;
-
-    assert(p_num_args == 1);
-    user_data->pa = api->godot_variant_as_vector3(p_args[0]);
-
-    printf("Native got vec x: %f", api->godot_vector3_get_axis(&user_data->pa, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z));
-
-    godot_variant ret;
-    api->godot_variant_new_nil(&ret);
-    return ret;
-}
-
-
-
 void GDN_EXPORT godot_powerwall_gdnative_singleton() {
     if (arvr_api != NULL) {
         arvr_api->godot_arvr_register_interface(&interface_struct);
@@ -140,27 +123,37 @@ GDCALLINGCONV godot_variant powerwall_config_set_edge_adjust(godot_object *p_ins
         int new_value = api->godot_variant_as_int(p_args[0]);
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         arvr_data->enable_edge_adjust = new_value;
-        std::cout << "Setting edge adjust to " << new_value << std::endl;
+
+        bool edgeAdjust = (new_value & 0x1) > 0;
+        bool color_debug = (new_value & 0x2) > 0;
+        bool div_w = (new_value & 0x4) > 0;
+        bool trans_pro = (new_value & 0x8) > 0;
+        std::cout << "Setting edge adjust to " << std::endl;
+        std::cout << "edgeAdjust = " << edgeAdjust << std::endl;
+        std::cout << "color_debug = " << color_debug << std::endl;
+        std::cout << "div_w = " << div_w << std::endl;
+        std::cout << "trans_pro = " << trans_pro << std::endl;
+
         api->godot_variant_new_bool(&ret, true);
     }
 
     return ret;
 }
 
-GDCALLINGCONV godot_variant powerwall_config_get_tracker_url(godot_object *p_instance, void *p_method_data,
-                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
-    godot_variant ret;
-
-    if (p_user_data == NULL) {
-        // this should never ever ever ever happen, just being paranoid....
-        api->godot_variant_new_bool(&ret, false);
-    } else {
-        auto *arvr_data = (arvr_data_struct *)p_user_data;
-        api->godot_variant_new_string(&ret, &arvr_data->tracker_url);
-    }
-
-    return ret;
-}
+//GDCALLINGCONV godot_variant powerwall_config_get_tracker_url(godot_object *p_instance, void *p_method_data,
+//                                                             void *p_user_data, int p_num_args, godot_variant **p_args) {
+//    godot_variant ret;
+//
+//    if (p_user_data == NULL) {
+//        // this should never ever ever ever happen, just being paranoid....
+//        api->godot_variant_new_bool(&ret, false);
+//    } else {
+//        auto *arvr_data = (arvr_data_struct *)p_user_data;
+//        api->godot_variant_new_string(&ret, &arvr_data->tracker_url);
+//    }
+//
+//    return ret;
+//}
 
 void VRPN_CALLBACK tracker_callback(void* p_data, const vrpn_TRACKERCB t ){
     auto *arvr_data = (arvr_data_struct *)p_data;
@@ -192,9 +185,6 @@ GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_ins
         api->godot_print(&new_value);
 
         // init vrpn
-        /* TODO: make tracker name variable -> attribute with onchange? */
-        //arvr_data->vrpnTracker = new vrpn_Tracker_Remote( "Tracker0@127.0.0.1" );
-
         if (arvr_data->vrpnTracker) {
             arvr_data->vrpnTracker->unregister_change_handler(p_user_data, tracker_callback);
             delete arvr_data->vrpnTracker;
@@ -252,7 +242,6 @@ GDCALLINGCONV godot_variant powerwall_get_head_transform(godot_object *p_instanc
         // no arguments given
         api->godot_variant_new_bool(&ret, false);
     } else {
-        godot_int eye = api->godot_variant_as_int(p_args[0]);
         auto *arvr_data = (arvr_data_struct *) p_user_data;
 
         godot_basis head_rotation;

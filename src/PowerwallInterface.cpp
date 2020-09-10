@@ -82,13 +82,13 @@ godot_bool godot_arvr_initialize(void *p_data) {
         api->godot_quat_set_z(&arvr_data->re, 0);
         api->godot_quat_set_w(&arvr_data->re, 0);
 
-        // note, this will be made the primary interface by ARVRInterfaceGDNative
-        arvr_data->is_initialised = true;
-
         api->godot_string_new(&arvr_data->tracker_url);
         arvr_data->vrpnTracker = nullptr;
 
         arvr_data->swap_eyes = false;
+
+        // note, this will be made the primary interface by ARVRInterfaceGDNative
+        arvr_data->is_initialised = true;
     }
 
     // and return our result
@@ -107,10 +107,10 @@ void godot_arvr_uninitialize(void *p_data) {
 }
 
 godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
-    godot_vector2 size;
-
+    /* returns the recommended render target size per eye for this device */
     //printf("Powerwall.arvr_get_recommended_render_targetsize()\n");
 
+    godot_vector2 size;
     //api->godot_vector2_new(&size, 2560, 1600);
     api->godot_vector2_new(&size, 1920, 1080);
 
@@ -158,13 +158,10 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     // Now construct our full transform, the order may be in reverse, have to test :)
     ret = *p_cam_transform;
     ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
-    //ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
-    //ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
+    ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
+    ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
 
-    godot_transform transform;
-    api->godot_transform_new_identity(&transform);
-
-    return transform; //ret;
+    return ret; // transform; //ret;
 }
 
 godot_vector3 get_eye_pos(void *p_data, int p_eye) {
@@ -445,7 +442,7 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     arvr_data->instance = p_instance;
     arvr_data->is_initialised = false;
     // *x for debugging
-    arvr_data->iod_m = 2 * 6.1 / 100.0;
+    arvr_data->iod_m = 5.5 / 100.0;
     arvr_data->enable_edge_adjust = 0;
     arvr_data->vrpnTracker = nullptr;
 
