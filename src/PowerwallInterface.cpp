@@ -9,8 +9,11 @@
 #include "PowerwallScreen.h"
 #include <cassert>
 #include <iostream>
+#include <cmath>
 
 arvr_data_struct *arvr_data = nullptr;
+
+void updateOpentrack(arvr_data_struct *arvr_data);
 
 namespace {
 const char *kName = "Powerwall";
@@ -85,6 +88,8 @@ godot_bool godot_arvr_initialize(void *p_data) {
         api->godot_string_new(&arvr_data->tracker_url);
         arvr_data->vrpnTracker = nullptr;
 
+        arvr_data->opentrack = new OpentrackServer(4242);
+
         arvr_data->swap_eyes = false;
 
         // note, this will be made the primary interface by ARVRInterfaceGDNative
@@ -118,6 +123,9 @@ godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
 }
 
 godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, godot_transform *p_cam_transform) {
+    // TODO: we should only return the offset to the cyclone's eye -- but nobody does that
+    // the result will be used for culling
+
     godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
     godot_transform ret;
 
@@ -407,6 +415,8 @@ void godot_arvr_process(void *p_data) {
         arvr_data->vrpnTracker->mainloop();
     }
 
+    updateOpentrack(arvr_data);
+
     arvr_api->godot_pw_set_mode(arvr_data->enable_edge_adjust);
     arvr_api->godot_pw_set_pa(&arvr_data->pa);
     arvr_api->godot_pw_set_pb(&arvr_data->pb);
@@ -436,6 +446,51 @@ void godot_arvr_process(void *p_data) {
 //    arvr_data->pc = pc->get_translation();
 }
 
+// set_euler_yxz expects a vector containing the Euler angles in the format
+// (ax,ay,az), where ax is the angle of rotation around x axis,
+// and similar for other axes.
+// This implementation uses YXZ convention (Z is the first rotation).
+void quat_set_euler_yxz(godot_quat *quat, const godot_vector3 &p_euler) {
+    float half_a1 = api->godot_vector3_get_axis(&p_euler, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y) * 0.5;
+    float half_a2 = api->godot_vector3_get_axis(&p_euler, godot_vector3_axis::GODOT_VECTOR3_AXIS_X) * 0.5;
+    float half_a3 = api->godot_vector3_get_axis(&p_euler, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z) * 0.5;
+
+    // R = Y(a1).X(a2).Z(a3) convention for Euler angles.
+    // Conversion to quaternion as listed in https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770024290.pdf (page A-6)
+    // a3 is the angle of the first rotation, following the notation in this reference.
+
+    float cos_a1 = cos(half_a1);
+    float sin_a1 = sin(half_a1);
+    float cos_a2 = cos(half_a2);
+    float sin_a2 = sin(half_a2);
+    float cos_a3 = cos(half_a3);
+    float sin_a3 = sin(half_a3);
+
+    api->godot_quat_set_x(quat, sin_a1 * cos_a2 * sin_a3 + cos_a1 * sin_a2 * cos_a3);
+    api->godot_quat_set_y(quat, sin_a1 * cos_a2 * cos_a3 - cos_a1 * sin_a2 * sin_a3);
+    api->godot_quat_set_z(quat, -sin_a1 * sin_a2 * cos_a3 + cos_a1 * cos_a2 * sin_a3);
+    api->godot_quat_set_w(quat, sin_a1 * sin_a2 * sin_a3 + cos_a1 * cos_a2 * cos_a3);
+}
+
+void updateOpentrack(arvr_data_struct *arvr_data) {
+    if (arvr_data->opentrack->update()) {
+        // translation
+        float x = static_cast<float>(-arvr_data->opentrack->currentPose[0]) / 100.0f;
+        float y = static_cast<float>(arvr_data->opentrack->currentPose[1]) / 100.0f;
+        float z = static_cast<float>(arvr_data->opentrack->currentPose[2]) / 100.0f;
+        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, x);
+        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, y);
+        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, z);
+
+        // rotation
+//        godot_vector3 angles;
+//        api->godot_vector3_new(&angles, static_cast<float>(arvr_data->opentrack->currentPose[3]),
+//                static_cast<float>(arvr_data->opentrack->currentPose[4]),
+//                static_cast<float>(arvr_data->opentrack->currentPose[5]));
+//        quat_set_euler_yxz(&arvr_data->re, angles);
+    }
+}
+
 void *godot_arvr_constructor(godot_object *p_instance) {
     printf("PowerwallInterface godot_arvr_constructor\n");
     arvr_data = (arvr_data_struct *)api->godot_alloc(sizeof(arvr_data_struct));
@@ -447,9 +502,15 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     arvr_data->vrpnTracker = nullptr;
 
     // projection screen coordinates - these are updated in the arvr-process method
-    api->godot_vector3_new(&arvr_data->pa, -2, 0.0,  0);
-    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, -0);
-    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
+//    api->godot_vector3_new(&arvr_data->pa, -2, 0.0,  0);
+//    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, -0);
+//    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
+
+    // monitor at home
+    api->godot_vector3_new(&arvr_data->pa, -.41, -0.225,  0);
+    api->godot_vector3_new(&arvr_data->pb,  .41, -0.225, -0);
+    api->godot_vector3_new(&arvr_data->pc, -.41, 0.225, -0);
+
 
     // eye coordinates - updated in the arvr-process method
     api->godot_vector3_new(&arvr_data->pe, 0,0,0);
@@ -465,6 +526,8 @@ void godot_arvr_destructor(void *p_data) {
         if (arvr_data->vrpnTracker) {
             delete arvr_data->vrpnTracker;
         }
+
+        delete arvr_data->opentrack;
 
         api->godot_free(p_data);
     }
