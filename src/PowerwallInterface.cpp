@@ -507,9 +507,9 @@ void *godot_arvr_constructor(godot_object *p_instance) {
 //    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
 
     // monitor at home
-    api->godot_vector3_new(&arvr_data->pa, -.41, -0.225,  0);
-    api->godot_vector3_new(&arvr_data->pb,  .41, -0.225, -0);
-    api->godot_vector3_new(&arvr_data->pc, -.41, 0.225, -0);
+    api->godot_vector3_new(&arvr_data->pa, -.41, -0.45,  0); // buttom left
+    api->godot_vector3_new(&arvr_data->pb,  .41, -0.45, -0); // buttom right
+    api->godot_vector3_new(&arvr_data->pc, -.41, 0., -0);  // upper left
 
 
     // eye coordinates - updated in the arvr-process method
