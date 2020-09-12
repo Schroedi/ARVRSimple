@@ -26,6 +26,16 @@ void printVector(godot_vector3 *v) {
            api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z));
 }
 
+void printRect(godot_rect2 *r) {
+    godot_vector2 p = api->godot_rect2_get_position(r);
+    godot_vector2 s = api->godot_rect2_get_size(r);
+    printf("[%f, %f (%f, %f)]\n",
+           api->godot_vector2_get_x(&p),
+           api->godot_vector2_get_y(&p),
+           api->godot_vector2_get_x(&s),
+           api->godot_vector2_get_y(&s));
+}
+
 godot_string godot_arvr_get_name(const void *p_data) {
     godot_string ret;
 
@@ -90,7 +100,7 @@ godot_bool godot_arvr_initialize(void *p_data) {
 
         arvr_data->opentrack = new OpentrackServer(4242);
 
-        arvr_data->swap_eyes = false;
+        arvr_data->swap_eyes = true;
 
         // note, this will be made the primary interface by ARVRInterfaceGDNative
         arvr_data->is_initialised = true;
@@ -404,7 +414,23 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
     assert(p_eye != /* EYE_MONO */ 0); // "Mono rendering is not supported.");
     if (arvr_data->swap_eyes)
         p_eye = p_eye == 1 ? 2 : 1;
-    arvr_api->godot_arvr_blit(p_eye, p_render_target, p_screen_rect);
+
+    bool mono_debug = true;
+    if (mono_debug){
+        //printf("eye %d rect: ", p_eye);
+        //printRect(p_screen_rect);
+        godot_vector2 s = api->godot_rect2_get_size(p_screen_rect);
+        godot_vector2 p = api->godot_rect2_get_position(p_screen_rect);
+        api->godot_vector2_set_x(&s, 1920*2);
+        if (p_eye == 2) {
+            api->godot_vector2_set_x(&p, -1920);
+        }
+        api->godot_rect2_set_size(p_screen_rect, &s);
+        api->godot_rect2_set_position(p_screen_rect, &p);
+        arvr_api->godot_arvr_blit(p_eye, p_render_target, p_screen_rect);
+    } else {
+        arvr_api->godot_arvr_blit(p_eye, p_render_target, p_screen_rect);
+    }
 }
 
 void godot_arvr_process(void *p_data) {
