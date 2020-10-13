@@ -1,11 +1,12 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
-[ext_resource path="res://Table.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Sphere.gd" type="Script" id=2]
 [ext_resource path="res://checker_shader.shader" type="Shader" id=3]
 [ext_resource path="res://gravel.tres" type="Material" id=4]
-[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Table.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Fps.gd" type="Script" id=6]
+[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=7]
 
 [sub_resource type="ProceduralSky" id=1]
 sun_latitude = 72.25
@@ -39,7 +40,7 @@ subdivide_depth = 32
 
 [sub_resource type="SpatialMaterial" id=7]
 flags_vertex_lighting = true
-flags_world_triplanar = true
+params_cull_mode = 2
 
 [sub_resource type="CubeMesh" id=8]
 size = Vector3( 0.01, 0.1, 10 )
@@ -73,8 +74,17 @@ bottom_radius = 0.005
 flags_transparent = true
 flags_no_depth_test = true
 
-[sub_resource type="CubeMesh" id=15]
+[sub_resource type="SpatialMaterial" id=15]
+flags_transparent = true
+flags_fixed_size = true
+albedo_color = Color( 0.129412, 0.568627, 0.258824, 0.419608 )
+
+[sub_resource type="CubeMesh" id=16]
 size = Vector3( 0.3, 0.3, 0.01 )
+
+[sub_resource type="SphereMesh" id=17]
+radius = 0.02
+height = 0.04
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
@@ -89,9 +99,11 @@ light_bake_mode = 2
 shadow_bias = 0.05
 directional_shadow_max_distance = 50.0
 
-[node name="ARVROrigin" parent="." instance=ExtResource( 5 )]
+[node name="ARVROrigin" parent="." instance=ExtResource( 7 )]
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
+near = 0.01
+far = 100.0
 debug_disable_window_position = true
 debug_emulate_vrpn = true
 
@@ -108,14 +120,14 @@ extra_cull_margin = 1000.0
 mesh = SubResource( 5 )
 material/0 = null
 
-[node name="Table2" parent="." instance=ExtResource( 2 )]
+[node name="Table2" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00687657, 0.179059, -0.364813 )
 
-[node name="Table3" parent="." instance=ExtResource( 2 )]
+[node name="Table3" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.25456, 0, 0, 0, 0.25456, 0, 0, 0, 0.25456, 0.00687657, -0.459681, -0.811733 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00068444, -0.005, -5.05 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.402765, -0.523442, -4.73225 )
 extra_cull_margin = 1000.0
 mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
@@ -166,7 +178,7 @@ material/0 = SubResource( 11 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0 )
 
 [node name="MeshInstance5" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.094563, -0.531681 )
 mesh = SubResource( 12 )
 material/0 = null
 
@@ -187,18 +199,24 @@ mesh = SubResource( 13 )
 material/0 = null
 
 [node name="MeshInstance7" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.04766, 0.0718767, 0.158968 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.564576, 0.148463, 0.159 )
 mesh = SubResource( 12 )
 material/0 = null
 
 [node name="MeshInstance10" type="MeshInstance" parent="Targets/MeshInstance7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.01128, 4.47035e-08 )
 mesh = SubResource( 13 )
-material/0 = null
+material/0 = SubResource( 15 )
 
 [node name="MeshInstance5" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.142694, 0, 0.0276991 )
-mesh = SubResource( 15 )
+mesh = SubResource( 16 )
 material/0 = null
+
+[node name="Sphere" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.303, 0 )
+mesh = SubResource( 17 )
+material/0 = null
+script = ExtResource( 2 )
 
 [editable path="ARVROrigin"]
