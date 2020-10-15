@@ -85,15 +85,6 @@ godot_bool godot_arvr_initialize(void *p_data) {
     printf("Powerwall.godot_arvr_initialize()\n");
 
     if (!arvr_data->is_initialised) {
-        // initialise this interface, so initialize any 3rd party libraries, open up HMD window if required, etc.
-        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, 0);
-        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, 1.75);
-        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, 2);
-
-        api->godot_quat_set_x(&arvr_data->re, 1);
-        api->godot_quat_set_y(&arvr_data->re, 0);
-        api->godot_quat_set_z(&arvr_data->re, 0);
-        api->godot_quat_set_w(&arvr_data->re, 0);
 
         api->godot_string_new(&arvr_data->tracker_url);
         arvr_data->vrpnTracker = nullptr;
