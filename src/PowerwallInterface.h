@@ -98,4 +98,7 @@ const godot_arvr_interface_gdnative interface_struct = {
     godot_arvr_notification
 };
 
+// helper
+void printVector(godot_vector3 *v);
+
 #endif /* !POWERWALL_INTERFACE_H */
