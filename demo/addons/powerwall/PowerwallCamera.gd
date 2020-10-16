@@ -13,19 +13,21 @@ func _ready():
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
 		if not debug_emulate_vrpn:
-			powerwall.set_tracker_url("UserB@tcp:134.102.222.124")
+			powerwall.set_tracker_url("UserA@tcp:134.102.222.124")
 	else:
 		print("Could not start powerwall interface")
 	
 	if debug_disable_window_position:
-		#OS.window_position = Vector2(0, 0)
-		#OS.window_size = Vector2(1920, 1080)
 		OS.window_borderless = false
+		OS.window_position = Vector2(0, 0)
+		#OS.window_size = Vector2(1920, 1080)
+		OS.window_size = Vector2(5120, 2160)
 		pass
 	else:
-		OS.window_position = Vector2(2560, 0)
+		OS.window_borderless = true
+		OS.window_position = Vector2(1920, 0)
 		OS.window_size = Vector2(2560*2 , 1600)
-
+		powerwall.set_swap_eyes(true)
 
 func _process(delta):
 	if (Input.is_action_just_pressed("edge_mode")):
@@ -56,7 +58,7 @@ func _process(delta):
 #	elif (Input.is_key_pressed(KEY_F)):
 #		get_parent().rotation.x -= delta
 
-	var speed = 1 if Input.is_key_pressed(KEY_SHIFT) else .5
+	var speed = 1.0 if Input.is_key_pressed(KEY_SHIFT) else .5
 	
 	# height
 	if (Input.is_key_pressed(KEY_UP) or Input.is_key_pressed(KEY_W)):
