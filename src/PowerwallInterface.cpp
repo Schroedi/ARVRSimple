@@ -519,7 +519,7 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
     if (arvr_data->swap_eyes)
         p_eye = p_eye == 1 ? 2 : 1;
 
-    bool mono_debug = true;
+    bool mono_debug = false;
     if (mono_debug){
         //printf("eye %d rect: ", p_eye);
         //printRect(p_screen_rect);
@@ -610,14 +610,14 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_transform_new_identity(&arvr_data->cam_transform);
 
     // projection screen coordinates - these are updated in the arvr-process method
-//    api->godot_vector3_new(&arvr_data->pa, -2, 0.0,  0);
-//    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, -0);
-//    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
+    api->godot_vector3_new(&arvr_data->pa, -2, 0.0,  0);
+    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, -0);
+    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
 
     // monitor at home
-    api->godot_vector3_new(&arvr_data->pa, -.41, -0.45,  0); // buttom left
-    api->godot_vector3_new(&arvr_data->pb,  .41, -0.45, -0); // buttom right
-    api->godot_vector3_new(&arvr_data->pc, -.41, 0.0, -0);  // upper left
+//    api->godot_vector3_new(&arvr_data->pa, -.41, -0.45,  0); // buttom left
+//    api->godot_vector3_new(&arvr_data->pb,  .41, -0.45, -0); // buttom right
+//    api->godot_vector3_new(&arvr_data->pc, -.41, 0.0, -0);  // upper left
 
     // eye coordinates - updated in the arvr-process method
     // for a small computer screen
