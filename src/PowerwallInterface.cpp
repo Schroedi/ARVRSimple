@@ -76,7 +76,7 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
 
     godot_transform eye_offset_transform;
     godot_transform hmd_transform;
-    godot_vector3 offset;
+
     // Currently we only support 1to1 scaling.
     godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
 
@@ -88,6 +88,7 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
     api->godot_transform_new_identity(&eye_offset_transform);
     if (p_eye == 1) {
         // left eye
+        godot_vector3 offset;
         api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
         if (false && rand() % 60 == 0) {
@@ -97,6 +98,7 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
         eye_offset_transform = api->godot_transform_translated(&eye_offset_transform, &offset);
     } else if (p_eye == 2) {
         // right eye
+        godot_vector3 offset;
         api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
         eye_offset_transform = api->godot_transform_translated(&eye_offset_transform, &offset);
@@ -610,9 +612,10 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_transform_new_identity(&arvr_data->cam_transform);
 
     // projection screen coordinates - these are updated in the arvr-process method
-    api->godot_vector3_new(&arvr_data->pa, -2, 0.0,  0);
-    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, -0);
-    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, -0);
+    // world coordinates
+    api->godot_vector3_new(&arvr_data->pa, -2, 0.0, 0);
+    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, 0);
+    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, 0);
 
     // monitor at home
 //    api->godot_vector3_new(&arvr_data->pa, -.41, -0.45,  0); // buttom left
