@@ -26,8 +26,8 @@ func _ready():
 	else:
 		OS.window_borderless = true
 		OS.window_position = Vector2(1920, 0)
-		OS.window_size = Vector2(2560*2 , 1600)
-		powerwall.set_swap_eyes(true)
+		OS.window_size = Vector2(2560*2, 1600)
+		powerwall.set_swap_eyes(false)
 
 func _process(delta):
 	if (Input.is_action_just_pressed("edge_mode")):
