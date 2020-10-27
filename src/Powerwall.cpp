@@ -10,7 +10,7 @@
 #include "Powerwall.h"
 
 void GDN_EXPORT *simple_constructor(godot_object *p_instance, void *p_method_data) {
-    return arvr_data;
+    return g_arvr_data;
 }
 
 void GDN_EXPORT simple_destructor(godot_object *p_instance, void *p_method_data, void *p_user_data) {
@@ -148,8 +148,8 @@ GDCALLINGCONV godot_variant powerwall_config_set_edge_adjust(godot_object *p_ins
 //        // this should never ever ever ever happen, just being paranoid....
 //        api->godot_variant_new_bool(&ret, false);
 //    } else {
-//        auto *arvr_data = (arvr_data_struct *)p_user_data;
-//        api->godot_variant_new_string(&ret, &arvr_data->tracker_url);
+//        auto *g_arvr_data = (arvr_data_struct *)p_user_data;
+//        api->godot_variant_new_string(&ret, &g_arvr_data->tracker_url);
 //    }
 //
 //    return ret;
@@ -216,15 +216,15 @@ GDCALLINGCONV godot_variant powerwall_config_set_tracker_url(godot_object *p_ins
         api->godot_variant_new_bool(&ret, false);
     } else {
         godot_int eye = api->godot_variant_as_int(p_args[0]);
-        auto *arvr_data = (arvr_data_struct *)p_user_data;
+        auto *g_arvr_data = (arvr_data_struct *)p_user_data;
         godot_real projection[16];
         float aspect = 1; // not used
         float near = 0.1;
         float far = 500;
-        godot_arvr_fill_projection_for_eye(arvr_data, projection, eye, aspect, near, far);
+        godot_arvr_fill_projection_for_eye(g_arvr_data, projection, eye, aspect, near, far);
 
 
-        //api->godot_variant_new_pool_real_array(&ret, &arvr_data->tracker_url);
+        //api->godot_variant_new_pool_real_array(&ret, &g_arvr_data->tracker_url);
     }
 
     return ret;
@@ -270,7 +270,7 @@ GDCALLINGCONV godot_variant powerwall_set_head_transform(godot_object *p_instanc
         godot_transform transform = api->godot_variant_as_transform(p_args[0]);
         auto *arvr_data = (arvr_data_struct *)p_user_data;
         // FIXME: overwrite transform, set overwrite to true and save transform
-        //arvr_data->enable_edge_adjust = new_value;
+        //g_arvr_data->enable_edge_adjust = new_value;
         godot_basis head_rotation = api->godot_transform_get_basis(&transform);
         arvr_data->pe = api->godot_transform_get_origin(&transform);
 

@@ -16,11 +16,13 @@
 typedef struct arvr_data_struct {
     godot_object * instance;
     bool is_initialised;
-    float iod_m;
 
+    godot_string tracker_url;
     vrpn_Tracker_Remote *vrpnTracker;
     OpentrackServer *opentrack;
 
+    // projection parameters - everything is in world coordinates (tracking system coordinates)
+    float iod_m;
     godot_bool swap_eyes;
     godot_vector3 va, vb, vc;
     godot_vector3 vr, vu, vn;
@@ -33,13 +35,16 @@ typedef struct arvr_data_struct {
     // near and far clip
     float n, f;
     godot_int enable_edge_adjust;
-    godot_string tracker_url;
+
+    // debugging
+    bool home_debug;
 
     // last transform we got in godot_arvr_get_transform_for_eye
-    godot_transform cam_transform;
+    // I suspect this is the ARVR Camera's transform in world space
+    godot_transform godot_cam_transform;
 } arvr_data_struct;
 
-extern arvr_data_struct *arvr_data;
+extern arvr_data_struct *g_arvr_data;
 
 void *godot_arvr_constructor(godot_object *p_instance);
 

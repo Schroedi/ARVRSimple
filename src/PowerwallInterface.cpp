@@ -1,3 +1,4 @@
+#include <climits>
 ////////////////////////////////////////////////////////////////////////////
 // This is just an example POWERWALL GDNative module. It does very little VR-ish
 // It also outputs lots of debugging stuff which should not be in a proper
@@ -6,68 +7,21 @@
 // Written by Bastiaan "Mux213" Olij, with loads of help from Thomas "Karroffel" Herzog
 
 #include "PowerwallInterface.h"
-#include "PowerwallScreen.h"
 #include <cassert>
 #include <iostream>
 #include <cmath>
+#include "PowerwallScreen.h"
+#include "utils.h"
 
-arvr_data_struct *arvr_data = nullptr;
+arvr_data_struct *g_arvr_data = nullptr;
 
 void updateOpentrack(arvr_data_struct *arvr_data);
+
+void updatePowerwallCoords();
 
 namespace {
 const char *kName = "Powerwall";
 } // namespace
-
-void printVector(godot_vector3 *v) {
-    printf("[%f, %f, %F]\n",
-           api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
-           api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y),
-           api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z));
-}
-
-void printRect(godot_rect2 *r) {
-    godot_vector2 p = api->godot_rect2_get_position(r);
-    godot_vector2 s = api->godot_rect2_get_size(r);
-    printf("[%f, %f (%f, %f)]\n",
-           api->godot_vector2_get_x(&p),
-           api->godot_vector2_get_y(&p),
-           api->godot_vector2_get_x(&s),
-           api->godot_vector2_get_y(&s));
-}
-
-void printCam(godot_real *m) {
-    printf("%f %f %f %f\n", m[0],m[4], m[8], m[12]);
-    printf("%f %f %f %f\n", m[1],m[5], m[9], m[13]);
-    printf("%f %f %f %f\n", m[2],m[6], m[10], m[14]);
-    printf("%f %f %f %f\n", m[3],m[7], m[11], m[15]);
-}
-
-// set_euler_yxz expects a vector containing the Euler angles in the format
-// (ax,ay,az), where ax is the angle of rotation around x axis,
-// and similar for other axes.
-// This implementation uses YXZ convention (Z is the first rotation).
-void quat_set_euler_yxz(godot_quat *quat, const godot_vector3 &p_euler) {
-    float half_a1 = api->godot_vector3_get_axis(&p_euler, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y) * 0.5;
-    float half_a2 = api->godot_vector3_get_axis(&p_euler, godot_vector3_axis::GODOT_VECTOR3_AXIS_X) * 0.5;
-    float half_a3 = api->godot_vector3_get_axis(&p_euler, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z) * 0.5;
-
-    // R = Y(a1).X(a2).Z(a3) convention for Euler angles.
-    // Conversion to quaternion as listed in https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770024290.pdf (page A-6)
-    // a3 is the angle of the first rotation, following the notation in this reference.
-
-    float cos_a1 = cos(half_a1);
-    float sin_a1 = sin(half_a1);
-    float cos_a2 = cos(half_a2);
-    float sin_a2 = sin(half_a2);
-    float cos_a3 = cos(half_a3);
-    float sin_a3 = sin(half_a3);
-
-    api->godot_quat_set_x(quat, sin_a1 * cos_a2 * sin_a3 + cos_a1 * sin_a2 * cos_a3);
-    api->godot_quat_set_y(quat, sin_a1 * cos_a2 * cos_a3 - cos_a1 * sin_a2 * sin_a3);
-    api->godot_quat_set_z(quat, -sin_a1 * sin_a2 * cos_a3 + cos_a1 * cos_a2 * sin_a3);
-    api->godot_quat_set_w(quat, sin_a1 * sin_a2 * sin_a3 + cos_a1 * cos_a2 * cos_a3);
-}
 
 // internal
 godot_vector3 get_eye_pos(void *p_data, int p_eye) {
@@ -81,7 +35,7 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
     godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
 
     godot_basis head_rotation;
-    //api->godot_basis_new_with_euler(&head_rotation, &arvr_data->re);
+    //api->godot_basis_new_with_euler(&head_rotation, &g_arvr_data->re);
     api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
 
     // create our transform from head center to eye
@@ -115,13 +69,14 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
 
     // we expect this to be identity, let's check
 //    godot_vector3 origin;
-//    api->godot_vector3_new(&origin, 0,0,0);
+//    api->godot_vector3_new(&origin, 1,0,0);
 //    auto test = api->godot_transform_xform_vector3(&reference_frame, &origin);
 //    if (rand() % 60 == 0) {
 //        printVector(&test);
 //    }
 
-    godot_transform transform = arvr_data->cam_transform;
+    godot_transform transform; // = g_arvr_data->godot_cam_transform;
+    api->godot_transform_new_identity(&transform);
 //    {
 //        godot_vector3 origin;
 //        api->godot_vector3_new(&origin, 0,0,0);
@@ -131,7 +86,7 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
 //        }
 //    }
 
-    transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
+    //transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
     transform = api->godot_transform_operator_multiply(&transform, &hmd_transform);
     transform = api->godot_transform_operator_multiply(&transform, &eye_offset_transform);
 
@@ -203,45 +158,14 @@ godot_transform camToTransform(godot_real *p_projection) {
     return M;
 }
 
-void TransformToCam(const godot_transform& in, godot_real *p_projection) {
-    godot_basis basis;
-    api->godot_basis_new(&basis);
-    godot_vector3 r1, r2, r3, off;
-    api->godot_vector3_new(&off, 0, 0, 0);
 
-    basis = api->godot_transform_get_basis(&in);
-    r1 = api->godot_basis_get_row(&basis, 0);
-    r2 = api->godot_basis_get_row(&basis, 1);
-    r3 = api->godot_basis_get_row(&basis, 2);
-    off = api->godot_transform_get_origin(&in);
-
-    p_projection[0] = api->godot_vector3_get_axis(&r1, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[1] = api->godot_vector3_get_axis(&r1, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[2] = api->godot_vector3_get_axis(&r1, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-    p_projection[3] = 0;
-
-    p_projection[4] = api->godot_vector3_get_axis(&r2, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[5] = api->godot_vector3_get_axis(&r2, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[6] = api->godot_vector3_get_axis(&r2, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-    p_projection[7] = 0;
-
-    p_projection[8] = api->godot_vector3_get_axis(&r3, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[9] = api->godot_vector3_get_axis(&r3, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[10] = api->godot_vector3_get_axis(&r3, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-    p_projection[11] = -1;
-
-    p_projection[12] = api->godot_vector3_get_axis(&off, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
-    p_projection[13] = api->godot_vector3_get_axis(&off, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
-    p_projection[14] = api->godot_vector3_get_axis(&off, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
-    p_projection[15] = 0;
-}
 
 
 ///////////////////
 // ARVR interface implementation
 ///////////////////
 
-godot_string godot_arvr_get_name(const void *p_data) {
+godot_string godot_arvr_get_name(__unused const void *p_data) {
     godot_string ret;
 
     printf("Powerwall interface get name.\n");
@@ -252,25 +176,25 @@ godot_string godot_arvr_get_name(const void *p_data) {
     return ret;
 }
 
-godot_int godot_arvr_get_capabilities(const void *p_data) {
+godot_int godot_arvr_get_capabilities(__unused const void *p_data) {
     printf("Powerwall interface get capabilities.");
     return 2; // 2 = ARVR_STEREO
 }
 
-godot_bool godot_arvr_get_anchor_detection_is_enabled(const void *p_data) {
+godot_bool godot_arvr_get_anchor_detection_is_enabled(__unused const void *p_data) {
     // does not apply here
     return false;
 }
 
-void godot_arvr_set_anchor_detection_is_enabled(void *p_data, bool p_enable) {
+void godot_arvr_set_anchor_detection_is_enabled(__unused void *p_data, __unused bool p_enable) {
     // we ignore this, not supported in this interface!
 }
 
-void godot_arvr_notification(void *p_data, godot_int p_what) {
+void godot_arvr_notification(__unused void *p_data, __unused godot_int p_what) {
     // we don't care
 }
 
-godot_bool godot_arvr_is_stereo(const void *p_data) {
+godot_bool godot_arvr_is_stereo(__unused const void *p_data) {
     return true;
 }
 
@@ -334,7 +258,7 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // Invalid arvr data
 
-    arvr_data->cam_transform = *p_cam_transform;
+    arvr_data->godot_cam_transform = *p_cam_transform;
 
 //    { // debug that cam transform is identity
 //        float projectionMatrix[16];
@@ -438,15 +362,15 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
 //    {
 //        godot_vector3 t1, t2, t3;
-//        float rx = api->godot_vector3_get_axis(&arvr_data->vr, GODOT_VECTOR3_AXIS_X);
-//        float ry = api->godot_vector3_get_axis(&arvr_data->vr, GODOT_VECTOR3_AXIS_Y);
-//        float rz = api->godot_vector3_get_axis(&arvr_data->vr, GODOT_VECTOR3_AXIS_Z);
-//        float ux = api->godot_vector3_get_axis(&arvr_data->vu, GODOT_VECTOR3_AXIS_X);
-//        float uy = api->godot_vector3_get_axis(&arvr_data->vu, GODOT_VECTOR3_AXIS_Y);
-//        float uz = api->godot_vector3_get_axis(&arvr_data->vu, GODOT_VECTOR3_AXIS_Z);
-//        float nx = api->godot_vector3_get_axis(&arvr_data->vn, GODOT_VECTOR3_AXIS_X);
-//        float ny = api->godot_vector3_get_axis(&arvr_data->vn, GODOT_VECTOR3_AXIS_Y);
-//        float nz = api->godot_vector3_get_axis(&arvr_data->vn, GODOT_VECTOR3_AXIS_Z);
+//        float rx = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_X);
+//        float ry = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_Y);
+//        float rz = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_Z);
+//        float ux = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_X);
+//        float uy = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_Y);
+//        float uz = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_Z);
+//        float nx = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_X);
+//        float ny = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_Y);
+//        float nz = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_Z);
 //        api->godot_vector3_new(&t1, rx, ux, nx);
 //        api->godot_vector3_new(&t2, ry, uy, ny);
 //        api->godot_vector3_new(&t3, rz, uz, nz);
@@ -544,6 +468,8 @@ void godot_arvr_process(void *p_data) {
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // "Invalid arvr data.");
 
+    updatePowerwallCoords();
+
     if (arvr_data->vrpnTracker) {
         arvr_data->vrpnTracker->mainloop();
     }
@@ -555,30 +481,32 @@ void godot_arvr_process(void *p_data) {
     arvr_api->godot_pw_set_pb(&arvr_data->pb);
     arvr_api->godot_pw_set_pc(&arvr_data->pc);
     arvr_api->godot_pw_set_pe(&arvr_data->pe);
+}
 
-    // TODO fix this
-
+/**
+ * Update projection plane coordinates from scene
+ */
+void updatePowerwallCoords() {// TODO fix this (interactive monitor placement with objects from the world)
 //    godot::SceneTree* tree  = (godot::SceneTree*)godot::Engine::get_singleton()->get_main_loop();
 //    auto a = tree->get_root();
 //
 //    //godot::String originPath = "Spatial/robot/camera_base/camera_rot/Camera/ARVROrigin";
 //    godot::String originPath = "Main/ARVROrigin";
 //    auto camera = ((godot::Spatial*)a->get_node(originPath + "/ARVRCamera"));
-//    arvr_data_struct * arvr_data = (arvr_data_struct *) p_data;
-//    arvr_data->pe = camera->get_translation();
+//    arvr_data_struct * g_arvr_data = (arvr_data_struct *) p_data;
+//    g_arvr_data->pe = camera->get_translation();
 //    auto r = camera->get_rotation();
-//    api->godot_vector3_set_axis(&arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, r.x);
-//    api->godot_vector3_set_axis(&arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, r.y);
-//    api->godot_vector3_set_axis(&arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, r.z);
+//    api->godot_vector3_set_axis(&g_arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, r.x);
+//    api->godot_vector3_set_axis(&g_arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, r.y);
+//    api->godot_vector3_set_axis(&g_arvr_data->re, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, r.z);
 //
 //    auto pa = ((godot::Spatial*)a->get_node(originPath + "/Screen/pa"));
 //    auto pb = ((godot::Spatial*)a->get_node(originPath + "/Screen/pb"));
 //    auto pc = ((godot::Spatial*)a->get_node(originPath + "/Screen/pc"));
-//    arvr_data->pa = pa->get_translation();
-//    arvr_data->pb = pb->get_translation();
-//    arvr_data->pc = pc->get_translation();
+//    g_arvr_data->pa = pa->get_translation();
+//    g_arvr_data->pb = pb->get_translation();
+//    g_arvr_data->pc = pc->get_translation();
 }
-
 
 
 void updateOpentrack(arvr_data_struct *arvr_data) {
@@ -593,42 +521,47 @@ void updateOpentrack(arvr_data_struct *arvr_data) {
 
         // rotation
 //        godot_vector3 angles;
-//        api->godot_vector3_new(&angles, static_cast<float>(arvr_data->opentrack->currentPose[3]),
-//                static_cast<float>(arvr_data->opentrack->currentPose[4]),
-//                static_cast<float>(arvr_data->opentrack->currentPose[5]));
-//        quat_set_euler_yxz(&arvr_data->re, angles);
+//        api->godot_vector3_new(&angles, static_cast<float>(g_arvr_data->opentrack->currentPose[3]),
+//                static_cast<float>(g_arvr_data->opentrack->currentPose[4]),
+//                static_cast<float>(g_arvr_data->opentrack->currentPose[5]));
+//        quat_set_euler_yxz(&g_arvr_data->re, angles);
     }
 }
 
 void *godot_arvr_constructor(godot_object *p_instance) {
     printf("PowerwallInterface godot_arvr_constructor\n");
-    arvr_data = (arvr_data_struct *)api->godot_alloc(sizeof(arvr_data_struct));
-    arvr_data->instance = p_instance;
-    arvr_data->is_initialised = false;
+    g_arvr_data = (arvr_data_struct *)api->godot_alloc(sizeof(arvr_data_struct));
+    g_arvr_data->instance = p_instance;
+    g_arvr_data->is_initialised = false;
     // *x for debugging
-    arvr_data->iod_m = 6.5 / 100.0;
-    arvr_data->enable_edge_adjust = 0;
-    arvr_data->vrpnTracker = nullptr;
-    api->godot_transform_new_identity(&arvr_data->cam_transform);
+    g_arvr_data->iod_m = 6.5 / 100.0;
+    g_arvr_data->enable_edge_adjust = 0;
+    g_arvr_data->vrpnTracker = nullptr;
+    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform);
 
-    // projection screen coordinates - these are updated in the arvr-process method
+    // debugging settings
+    g_arvr_data->home_debug = true;
+
+    // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates
-    api->godot_vector3_new(&arvr_data->pa, -2, 0.0, 0);
-    api->godot_vector3_new(&arvr_data->pb,  2, 0.0, 0);
-    api->godot_vector3_new(&arvr_data->pc, -2, 2.5, 0);
-
-    // monitor at home
-//    api->godot_vector3_new(&arvr_data->pa, -.41, -0.45,  0); // buttom left
-//    api->godot_vector3_new(&arvr_data->pb,  .41, -0.45, -0); // buttom right
-//    api->godot_vector3_new(&arvr_data->pc, -.41, 0.0, -0);  // upper left
+    if (g_arvr_data->home_debug) {
+        // monitor at home -- tracking center is horizontally centered at the upper edge
+        api->godot_vector3_new(&g_arvr_data->pa, -.41, -0.45, 0); // buttom left
+        api->godot_vector3_new(&g_arvr_data->pb, .41, -0.45, -0); // buttom right
+        api->godot_vector3_new(&g_arvr_data->pc, -.41, 0.0, -0);  // upper left
+    } else {
+        api->godot_vector3_new(&g_arvr_data->pa, -2, 0.0, 0);
+        api->godot_vector3_new(&g_arvr_data->pb,  2, 0.0, 0);
+        api->godot_vector3_new(&g_arvr_data->pc, -2, 2.5, 0);
+    }
 
     // eye coordinates - updated in the arvr-process method
-    // for a small computer screen
-    api->godot_vector3_new(&arvr_data->pe, 0,0,0.7); // will be overwritten by tracking
-    //api->godot_vector3_new(&arvr_data->pe, 0,1.75,2); // Powerwall
-    api->godot_quat_new(&arvr_data->re, 0,0,0,1);
+    // world coordinates
+    api->godot_vector3_new(&g_arvr_data->pe, 0, 0, 0.7); // will be overwritten by tracking
+    //api->godot_vector3_new(&g_arvr_data->pe, 0, 1.75,2); // Powerwall
+    api->godot_quat_new(&g_arvr_data->re, 0, 0, 0, 1);
 
-    return arvr_data;
+    return g_arvr_data;
 };
 
 void godot_arvr_destructor(void *p_data) {

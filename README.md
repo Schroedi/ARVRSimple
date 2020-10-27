@@ -24,3 +24,10 @@ edge_mode p
 edge_debug c
 w_debug y
 trans_pro t
+
+# Debugging Monitor/Powerwall
+1. ARVRCamera in scene:
+`debug_disable_window_position = true; debug_emulate_vrpn = true`
+2. Monitor measures `Powerwallinterface.cpp:612`
+3. `mono_debug` in `Powerwallinterface.cpp:522`
+4. 
