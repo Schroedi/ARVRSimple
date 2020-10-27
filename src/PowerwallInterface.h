@@ -68,12 +68,12 @@ void godot_arvr_uninitialize(void *p_data);
 
 godot_vector2 godot_arvr_get_render_targetsize(const void *p_data);
 
-godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, godot_transform *p_cam_transform);
+godot_transform godot_arvr_get_transform_for_eye(void *p_data, __unused godot_int p_eye, godot_transform *p_cam_transform);
 
-void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection, godot_int p_eye, godot_real p_aspect,
+void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection, godot_int p_eye, __unused godot_real p_aspect,
                                         godot_real p_z_near, godot_real p_z_far);
 
-godot_int godot_arvr_get_external_texture_for_eye(void *p_data, godot_int p_eye);
+godot_int godot_arvr_get_external_texture_for_eye(__unused void *p_data, __unused godot_int p_eye);
 
 void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye, godot_rid *p_render_target, godot_rect2 *p_screen_rect);
 

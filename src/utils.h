@@ -98,7 +98,4 @@ void printTransform (godot_transform &p_transform) {
     printCam(projectionMatrix);
 }
 
-
-
-
 #endif //POWERWALL_UTILS_H

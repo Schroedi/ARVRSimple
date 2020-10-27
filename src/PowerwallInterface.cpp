@@ -10,7 +10,6 @@
 #include <cassert>
 #include <iostream>
 #include <cmath>
-#include "PowerwallScreen.h"
 #include "utils.h"
 
 arvr_data_struct *g_arvr_data = nullptr;
@@ -23,8 +22,8 @@ namespace {
 const char *kName = "Powerwall";
 } // namespace
 
-// internal
-godot_vector3 get_eye_pos(void *p_data, int p_eye) {
+// Eye position in world space
+godot_vector3 _get_eye_pos(void *p_data, int p_eye) {
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // Invalid arvr data
 
@@ -45,10 +44,10 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
         godot_vector3 offset;
         api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
         offset = api->godot_basis_xform(&head_rotation, &offset);
-        if (false && rand() % 60 == 0) {
-            printf("Offset for eye %d: ", p_eye);
-            printVector(&offset);
-        }
+//        if (rand() % 60 == 0) {
+//            printf("Offset for eye %d: ", p_eye);
+//            printVector(&offset);
+//        }
         eye_offset_transform = api->godot_transform_translated(&eye_offset_transform, &offset);
     } else if (p_eye == 2) {
         // right eye
@@ -64,27 +63,11 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
     api->godot_transform_new_identity(&hmd_transform);
     hmd_transform = api->godot_transform_translated(&hmd_transform, &arvr_data->pe);
 
-    // Now construct our full transform, the order may be in reverse, have to test :)
+    // Now construct our full transform
     godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
-
-    // we expect this to be identity, let's check
-//    godot_vector3 origin;
-//    api->godot_vector3_new(&origin, 1,0,0);
-//    auto test = api->godot_transform_xform_vector3(&reference_frame, &origin);
-//    if (rand() % 60 == 0) {
-//        printVector(&test);
-//    }
 
     godot_transform transform; // = g_arvr_data->godot_cam_transform;
     api->godot_transform_new_identity(&transform);
-//    {
-//        godot_vector3 origin;
-//        api->godot_vector3_new(&origin, 0,0,0);
-//        auto test = api->godot_transform_xform_vector3(&transform, &origin);
-//        if (rand() % 60 == 0) {
-//            printVector(&test);
-//        }
-//    }
 
     //transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
     transform = api->godot_transform_operator_multiply(&transform, &hmd_transform);
@@ -97,17 +80,15 @@ godot_vector3 get_eye_pos(void *p_data, int p_eye) {
     godot_vector3 ret;
     api->godot_vector3_new(&ret,0,0,0);
     ret = api->godot_transform_xform_vector3(&transform, &ret);
-    {
-        if (rand() % 60 == 0) {
-            printf("Eye pos for eye %d: ", p_eye);
-            printVector(&ret);
-        }
+    if (rand() % 60 == 0) {
+        printf("Eye pos for eye %d: ", p_eye);
+        printVector(&ret);
     }
     return ret;
 }
 
 // reimplementation of openGL projection matrix junction
-void arvr_set_frustum(godot_real *p_projection, godot_real p_left, godot_real p_right, godot_real p_bottom, godot_real p_top, godot_real p_near, godot_real p_far) {
+void _arvr_set_frustum(godot_real *p_projection, godot_real p_left, godot_real p_right, godot_real p_bottom, godot_real p_top, godot_real p_near, godot_real p_far) {
     godot_real x = 2 * p_near / (p_right - p_left);
     godot_real y = 2 * p_near / (p_top - p_bottom);
 
@@ -135,7 +116,8 @@ void arvr_set_frustum(godot_real *p_projection, godot_real p_left, godot_real p_
     p_projection[15] = 0;
 }
 
-godot_transform camToTransform(godot_real *p_projection) {
+// Create a godot transform object from an OpenGL camera matrix
+godot_transform _camToTransform(godot_real *p_projection) {
     // Rotate the projection to be non-perpendicular.
     godot_basis basis;
     api->godot_basis_new(&basis);
@@ -157,8 +139,6 @@ godot_transform camToTransform(godot_real *p_projection) {
 
     return M;
 }
-
-
 
 
 ///////////////////
@@ -222,7 +202,6 @@ godot_bool godot_arvr_initialize(void *p_data) {
 
         arvr_data->swap_eyes = true;
 
-        // note, this will be made the primary interface by ARVRInterfaceGDNative
         arvr_data->is_initialised = true;
     }
 
@@ -235,31 +214,34 @@ void godot_arvr_uninitialize(void *p_data) {
     auto * arvr_data = (arvr_data_struct *) p_data;
 
     if (arvr_data->is_initialised) {
-        // note, this will already be removed as the primary interface by ARVRInterfaceGDNative
         // cleanup if needed
         arvr_data->is_initialised = false;
     }
 }
 
+/* returns the recommended render target size per eye for this device */
 godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
-    /* returns the recommended render target size per eye for this device */
-    //printf("Powerwall.arvr_get_recommended_render_targetsize()\n");
-
-    godot_vector2 size;
-    //api->godot_vector2_new(&size, 2560, 1600);
-    api->godot_vector2_new(&size, 1920, 1080);
-
-    return size;
-}
-
-godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, godot_transform *p_cam_transform) {
-    // TODO: we should only return the offset to the cyclone's eye -- but nobody does that in the godot VR plugins
-    // the result will be used for culling
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // Invalid arvr data
 
-    arvr_data->godot_cam_transform = *p_cam_transform;
+    godot_vector2 size;
+    if (arvr_data->home_debug) {
+        api->godot_vector2_new(&size, 2560, 1600);
+    } else {
+        api->godot_vector2_new(&size, 1920, 1080);
+    }
+    return size;
+}
 
+godot_transform godot_arvr_get_transform_for_eye(void *p_data, __unused godot_int p_eye, godot_transform *p_cam_transform) {
+    // BUG: The code in godot looks like we should only return the offset to the cyclone's eye -- but nobody does that
+    // in the godot VR plugins.
+    // The result will be used for culling
+    auto *arvr_data = (arvr_data_struct *)p_data;
+    assert(arvr_data != nullptr); // Invalid arvr data
+
+    // save the last camera transform we got from godot
+    arvr_data->godot_cam_transform = *p_cam_transform;
 //    { // debug that cam transform is identity
 //        float projectionMatrix[16];
 //        TransformToCam(*p_cam_transform, projectionMatrix);
@@ -270,51 +252,52 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, godot_int p_eye, 
     api->godot_transform_new_identity(&ret);
     return ret;
 
-    godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
-
-    godot_transform transform_for_eye;
-    godot_transform hmd_transform;
-    godot_vector3 offset;
-    // Currently we only support 1to1 scaling.
-    godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
-
-    godot_basis head_rotation;
-    api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
-
-
-    // create our transform from head center to eye
-    api->godot_transform_new_identity(&transform_for_eye);
-    if (p_eye == 1) {
-        // left eye
-        api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-        offset = api->godot_basis_xform(&head_rotation, &offset);
-        transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
-    } else if (p_eye == 2) {
-        // right eye
-        api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-        offset = api->godot_basis_xform(&head_rotation, &offset);
-        transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
-    } else {
-        // leave in the middle, mono
-    }
-
-    // now determine our HMD positional tracking
-    api->godot_transform_new_identity(&hmd_transform);
-    hmd_transform = api->godot_transform_translated(&hmd_transform, &arvr_data->pe);
-
-    // Now construct our full transform, the order may be in reverse, have to test :)
-    // ignore cam and reference here to be compatible to the shader
-    //ret = *p_cam_transform;
-    //ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
-
-    //ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
-    //ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
-
-    return ret; // transform; //ret;
+//    godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
+//
+//    godot_transform transform_for_eye;
+//    godot_transform hmd_transform;
+//    godot_vector3 offset;
+//    // Currently we only support 1to1 scaling.
+//    godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
+//
+//    godot_basis head_rotation;
+//    api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
+//
+//
+//    // create our transform from head center to eye
+//    api->godot_transform_new_identity(&transform_for_eye);
+//    if (p_eye == 1) {
+//        // left eye
+//        api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+//        offset = api->godot_basis_xform(&head_rotation, &offset);
+//        transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
+//    } else if (p_eye == 2) {
+//        // right eye
+//        api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+//        offset = api->godot_basis_xform(&head_rotation, &offset);
+//        transform_for_eye = api->godot_transform_translated(&transform_for_eye, &offset);
+//    } else {
+//        // leave in the middle, mono
+//    }
+//
+//    // now determine our HMD positional tracking
+//    api->godot_transform_new_identity(&hmd_transform);
+//    hmd_transform = api->godot_transform_translated(&hmd_transform, &arvr_data->pe);
+//
+//    // Now construct our full transform, the order may be in reverse, have to test :)
+//    // ignore cam and reference here to be compatible to the shader
+//    //ret = *p_cam_transform;
+//    //ret = api->godot_transform_operator_multiply(&ret, &reference_frame);
+//
+//    //ret = api->godot_transform_operator_multiply(&ret, &hmd_transform);
+//    //ret = api->godot_transform_operator_multiply(&ret, &transform_for_eye);
+//
+//    return ret; // transform; //ret;
 }
 
+
 void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
-                                        godot_int p_eye, godot_real p_aspect,
+                                        godot_int p_eye, __unused godot_real p_aspect,
                                         godot_real p_z_near,
                                         godot_real p_z_far) {
     auto *arvr_data = (arvr_data_struct *)p_data;
@@ -324,7 +307,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float n = p_z_near;
     float f = p_z_far;
 
-    godot_vector3 pe = get_eye_pos(p_data, p_eye);
+    godot_vector3 pe = _get_eye_pos(p_data, p_eye);
     //printVector(&pe);
 
     // Compute an orthonormal basis for the screen.
@@ -352,7 +335,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float t = api->godot_vector3_dot(&arvr_data->vu, &arvr_data->vc) * n / d;
 
     // Load the perpendicular projection.
-    arvr_set_frustum(p_projection, l, r, b, t, n, f);
+    _arvr_set_frustum(p_projection, l, r, b, t, n, f);
 
     // Rotate the projection to be non-perpendicular. (needed for projection planes not alignet with the XY plane)
     // This aligns the projection canvas plane with the OpenGL xy-plane
@@ -385,7 +368,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     godot_transform Mt;
     api->godot_transform_new(&Mt, &basis, &off);
 
-    godot_transform P = camToTransform(p_projection);
+    godot_transform P = _camToTransform(p_projection);
 
     // set eye offset for the shader - we don't ned to use it for the matrix calculation
     // as this is already included in our eye position we work with
@@ -431,7 +414,7 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     //TransformToCam(P, p_projection);
 }
 
-godot_int godot_arvr_get_external_texture_for_eye(void *p_data, godot_int p_eye) {
+godot_int godot_arvr_get_external_texture_for_eye(__unused void *p_data, __unused godot_int p_eye) {
     // we don't support this
     return 0;
 }
@@ -445,8 +428,7 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
     if (arvr_data->swap_eyes)
         p_eye = p_eye == 1 ? 2 : 1;
 
-    bool mono_debug = false;
-    if (mono_debug){
+    if (arvr_data->home_debug){
         //printf("eye %d rect: ", p_eye);
         //printRect(p_screen_rect);
         godot_vector2 s = api->godot_rect2_get_size(p_screen_rect);
@@ -562,16 +544,13 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_quat_new(&g_arvr_data->re, 0, 0, 0, 1);
 
     return g_arvr_data;
-};
+}
 
 void godot_arvr_destructor(void *p_data) {
     if (p_data != nullptr) {
         auto *arvr_data = (arvr_data_struct *)p_data;
 
-        if (arvr_data->vrpnTracker) {
-            delete arvr_data->vrpnTracker;
-        }
-
+        delete arvr_data->vrpnTracker;
         delete arvr_data->opentrack;
 
         api->godot_free(p_data);
