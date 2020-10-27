@@ -8,10 +8,17 @@
 #ifndef POWERWALL_INTERFACE_H
 #define POWERWALL_INTERFACE_H
 
+//old clang?
+#ifndef __unused
+#define __unused
+#endif
+
 #include <vrpn_Tracker.h>
 #include "GodotCalls.h"
 #include "OpentrackServer.h"
 
+//#include <linalg.h>
+//using namespace linalg::aliases;
 
 typedef struct arvr_data_struct {
     godot_object * instance;

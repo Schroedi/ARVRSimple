@@ -12,6 +12,7 @@
 #include <cmath>
 #include "utils.h"
 
+
 arvr_data_struct *g_arvr_data = nullptr;
 
 void updateOpentrack(arvr_data_struct *arvr_data);
@@ -116,30 +117,33 @@ void _arvr_set_frustum(godot_real *p_projection, godot_real p_left, godot_real p
     p_projection[15] = 0;
 }
 
-// Create a godot transform object from an OpenGL camera matrix
-godot_transform _camToTransform(godot_real *p_projection) {
-    // Rotate the projection to be non-perpendicular.
-    godot_basis basis;
-    api->godot_basis_new(&basis);
-    godot_vector3 r1, r2, r3, off;
+void _arvr_set_frustumT(godot_real *p_projection, godot_real p_left, godot_real p_right, godot_real p_bottom, godot_real p_top, godot_real p_near, godot_real p_far) {
+    godot_real x = 2 * p_near / (p_right - p_left);
+    godot_real y = 2 * p_near / (p_top - p_bottom);
 
-    // get current projection matrix
-    api->godot_vector3_new(&r1, p_projection[0], p_projection[1], p_projection[2]);
-    api->godot_vector3_new(&r2, p_projection[4], p_projection[5], p_projection[6]);
-    api->godot_vector3_new(&r3, p_projection[8], p_projection[9], p_projection[10]);
-    // offset
-    api->godot_vector3_new(&off, p_projection[12],p_projection[13],p_projection[14]);
+    godot_real a = (p_right + p_left) / (p_right - p_left);
+    godot_real b = (p_top + p_bottom) / (p_top - p_bottom);
+    godot_real c = -(p_far + p_near) / (p_far - p_near);
+    godot_real d = -2 * p_far * p_near / (p_far - p_near);
 
-    api->godot_basis_set_row(&basis, 0, &r1);
-    api->godot_basis_set_row(&basis, 1, &r2);
-    api->godot_basis_set_row(&basis, 2, &r3);
-
-    godot_transform M;
-    api->godot_transform_new(&M, &basis, &off);
-
-    return M;
+    // Godot is column major
+    p_projection[0] = x;
+    p_projection[4] = 0;
+    p_projection[8] = 0;
+    p_projection[12] = 0;
+    p_projection[1] = 0;
+    p_projection[5] = y;
+    p_projection[9] = 0;
+    p_projection[13] = 0;
+    p_projection[2] = a;
+    p_projection[6] = b;
+    p_projection[10] = c;
+    p_projection[14] = -1;
+    p_projection[3] = 0;
+    p_projection[7] = 0;
+    p_projection[11] = d;
+    p_projection[15] = 0;
 }
-
 
 ///////////////////
 // ARVR interface implementation
@@ -308,7 +312,6 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float f = p_z_far;
 
     godot_vector3 pe = _get_eye_pos(p_data, p_eye);
-    //printVector(&pe);
 
     // Compute an orthonormal basis for the screen.
     arvr_data->vr = api->godot_vector3_operator_subtract(&arvr_data->pb, &arvr_data->pa);
@@ -335,7 +338,11 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float t = api->godot_vector3_dot(&arvr_data->vu, &arvr_data->vc) * n / d;
 
     // Load the perpendicular projection.
+    //_arvr_set_frustumT(p_projection, l, r, b, t, n, f);
     _arvr_set_frustum(p_projection, l, r, b, t, n, f);
+
+    //godot_transform P = _camToTransformT(p_projection);
+    godot_transform P = _camToTransform(p_projection);
 
     // Rotate the projection to be non-perpendicular. (needed for projection planes not alignet with the XY plane)
     // This aligns the projection canvas plane with the OpenGL xy-plane
@@ -368,49 +375,35 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     godot_transform Mt;
     api->godot_transform_new(&Mt, &basis, &off);
 
-    godot_transform P = _camToTransform(p_projection);
-
-    // set eye offset for the shader - we don't ned to use it for the matrix calculation
-    // as this is already included in our eye position we work with
-    {
-        godot_vector3 offset;
-        godot_basis head_rotation;
-        godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
-        api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
-        if (p_eye == 1) {
-            // left eye
-            api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-            offset = api->godot_basis_xform(&head_rotation, &offset);
-        } else if (p_eye == 2) {
-            // right eye
-            api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-            offset = api->godot_basis_xform(&head_rotation, &offset);
-        } else {
-            // eye 0 for culling
-            api->godot_vector3_new(&offset, 0,0,0);
-        }
-        // the offset has it's origin in the cyclope's eye
-        arvr_api->godot_pw_set_offset(&offset);
-    }
-
     godot_transform transform_for_eye;
     api->godot_transform_new_identity(&transform_for_eye);
     pe = api->godot_vector3_operator_multiply_scalar(&pe, -1);
     transform_for_eye = api->godot_transform_translated(&transform_for_eye, &pe);
 
+    godot_transform test;
+    api->godot_transform_new_identity(&test);
+    godot_vector3 test_off;
+    api->godot_vector3_new(&test_off, 0,1,0);
+    test = api->godot_transform_translated(&test, &test_off);
+
     godot_transform PMT;
     api->godot_transform_new_identity(&PMT);
-    PMT = api->godot_transform_operator_multiply(&P, &PMT);
-    PMT = api->godot_transform_operator_multiply(&Mt, &PMT);
-    PMT = api->godot_transform_operator_multiply(&transform_for_eye, &PMT);
+//    PMT = api->godot_transform_operator_multiply(&P, &PMT);
+//    PMT = api->godot_transform_operator_multiply(&test, &PMT);
+    //PMT = api->godot_transform_operator_multiply(&Mt, &PMT);
+    //PMT = api->godot_transform_operator_multiply(&transform_for_eye, &PMT);
 
-//    PMT = api->godot_transform_operator_multiply(&PMT, &P);
-//    PMT = api->godot_transform_operator_multiply(&PMT, &transform_for_eye);
+    PMT = api->godot_transform_operator_multiply(&PMT, &P);
+    PMT = api->godot_transform_operator_multiply(&PMT, &test);
 //    PMT = api->godot_transform_operator_multiply(&PMT, &Mt);
-
+//    PMT = api->godot_transform_operator_multiply(&PMT, &transform_for_eye);
 
     // back to opengl
-    TransformToCam(PMT, p_projection);
+    //TransformToCamT(PMT, p_projection);
+    //TransformToCam(PMT, p_projection);
+
+    // just use the projection matrix P
+    //TransformToCamT(P, p_projection);
     //TransformToCam(P, p_projection);
 }
 
@@ -463,6 +456,29 @@ void godot_arvr_process(void *p_data) {
     arvr_api->godot_pw_set_pb(&arvr_data->pb);
     arvr_api->godot_pw_set_pc(&arvr_data->pc);
     arvr_api->godot_pw_set_pe(&arvr_data->pe);
+
+    //    // set eye offset for the shader - we don't ned to use it for the matrix calculation
+//    // as this is already included in our eye position we work with
+//    {
+//        godot_vector3 offset;
+//        godot_basis head_rotation;
+//        godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
+//        api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
+//        if (p_eye == 1) {
+//            // left eye
+//            api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+//            offset = api->godot_basis_xform(&head_rotation, &offset);
+//        } else if (p_eye == 2) {
+//            // right eye
+//            api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+//            offset = api->godot_basis_xform(&head_rotation, &offset);
+//        } else {
+//            // eye 0 for culling
+//            api->godot_vector3_new(&offset, 0,0,0);
+//        }
+//        // the offset has it's origin in the cyclope's eye
+//        arvr_api->godot_pw_set_offset(&offset);
+//    }
 }
 
 /**
@@ -522,7 +538,7 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform);
 
     // debugging settings
-    g_arvr_data->home_debug = true;
+    g_arvr_data->home_debug = false;
 
     // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates
@@ -538,9 +554,12 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     }
 
     // eye coordinates - updated in the arvr-process method
-    // world coordinates
-    api->godot_vector3_new(&g_arvr_data->pe, 0, 0, 0.7); // will be overwritten by tracking
-    //api->godot_vector3_new(&g_arvr_data->pe, 0, 1.75,2); // Powerwall
+    // world coordinates - will be overwritten by tracking
+    if (g_arvr_data->home_debug) {
+        api->godot_vector3_new(&g_arvr_data->pe, 0, 0, 0.7);
+    } else {
+        api->godot_vector3_new(&g_arvr_data->pe, 0, 1.75, 2);
+    }
     api->godot_quat_new(&g_arvr_data->re, 0, 0, 0, 1);
 
     return g_arvr_data;

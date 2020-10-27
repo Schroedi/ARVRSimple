@@ -65,6 +65,86 @@ void TransformToCam(const godot_transform& in, godot_real *p_projection) {
     p_projection[15] = 0;
 }
 
+void TransformToCamT(const godot_transform& in, godot_real *p_projection) {
+    godot_basis basis;
+    api->godot_basis_new(&basis);
+    godot_vector3 r1, r2, r3, off;
+    api->godot_vector3_new(&off, 0, 0, 0);
+
+    basis = api->godot_transform_get_basis(&in);
+    r1 = api->godot_basis_get_row(&basis, 0);
+    r2 = api->godot_basis_get_row(&basis, 1);
+    r3 = api->godot_basis_get_row(&basis, 2);
+    off = api->godot_transform_get_origin(&in);
+
+    p_projection[0] = api->godot_vector3_get_axis(&r1, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
+    p_projection[1] = api->godot_vector3_get_axis(&r2, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
+    p_projection[2] = api->godot_vector3_get_axis(&r3, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
+    p_projection[3] = 0;
+
+    p_projection[4] = api->godot_vector3_get_axis(&r1, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
+    p_projection[5] = api->godot_vector3_get_axis(&r2, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
+    p_projection[6] = api->godot_vector3_get_axis(&r3, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
+    p_projection[7] = 0;
+
+    p_projection[8] = api->godot_vector3_get_axis(&r1, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
+    p_projection[9] = api->godot_vector3_get_axis(&r2, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
+    p_projection[10] = api->godot_vector3_get_axis(&r3, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
+    p_projection[11] = -1;
+
+    p_projection[12] = api->godot_vector3_get_axis(&off, godot_vector3_axis::GODOT_VECTOR3_AXIS_X);
+    p_projection[13] = api->godot_vector3_get_axis(&off, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y);
+    p_projection[14] = api->godot_vector3_get_axis(&off, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z);
+    p_projection[15] = 0;
+}
+
+// Create a godot transform object from an OpenGL camera matrix
+godot_transform _camToTransform(godot_real *p_projection) {
+    // Rotate the projection to be non-perpendicular.
+    godot_basis basis;
+    api->godot_basis_new(&basis);
+    godot_vector3 r1, r2, r3, off;
+
+    // get current projection matrix
+    api->godot_vector3_new(&r1, p_projection[0], p_projection[1], p_projection[2]);
+    api->godot_vector3_new(&r2, p_projection[4], p_projection[5], p_projection[6]);
+    api->godot_vector3_new(&r3, p_projection[8], p_projection[9], p_projection[10]);
+    // offset
+    api->godot_vector3_new(&off, p_projection[12],p_projection[13],p_projection[14]);
+
+    api->godot_basis_set_row(&basis, 0, &r1);
+    api->godot_basis_set_row(&basis, 1, &r2);
+    api->godot_basis_set_row(&basis, 2, &r3);
+
+    godot_transform M;
+    api->godot_transform_new(&M, &basis, &off);
+
+    return M;
+}
+
+godot_transform _camToTransformT(godot_real *p_projection) {
+    // Rotate the projection to be non-perpendicular.
+    godot_basis basis;
+    api->godot_basis_new(&basis);
+    godot_vector3 r1, r2, r3, off;
+
+    // get current projection matrix
+    api->godot_vector3_new(&r1, p_projection[0], p_projection[4], p_projection[8]);
+    api->godot_vector3_new(&r2, p_projection[1], p_projection[5], p_projection[9]);
+    api->godot_vector3_new(&r3, p_projection[2], p_projection[6], p_projection[10]);
+    // offset
+    api->godot_vector3_new(&off, p_projection[12],p_projection[13],p_projection[14]);
+
+    api->godot_basis_set_row(&basis, 0, &r1);
+    api->godot_basis_set_row(&basis, 1, &r2);
+    api->godot_basis_set_row(&basis, 2, &r3);
+
+    godot_transform M;
+    api->godot_transform_new(&M, &basis, &off);
+
+    return M;
+}
+
 void printVector(godot_vector3 *v) {
     printf("[%f, %f, %F]\n",
            api->godot_vector3_get_axis(v, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
