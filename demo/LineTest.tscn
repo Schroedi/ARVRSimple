@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Sphere.gd" type="Script" id=2]
@@ -37,65 +37,72 @@ size = Vector2( 100, 100 )
 subdivide_width = 100
 subdivide_depth = 100
 
-[sub_resource type="PlaneMesh" id=20]
+[sub_resource type="PlaneMesh" id=6]
 subdivide_width = 10
 subdivide_depth = 10
 
-[sub_resource type="SpatialMaterial" id=21]
+[sub_resource type="SpatialMaterial" id=7]
 flags_world_triplanar = true
 albedo_texture = ExtResource( 8 )
 uv1_triplanar = true
 
-[sub_resource type="CubeMesh" id=6]
-size = Vector3( 0.01, 0.26, 10 )
+[sub_resource type="CubeMesh" id=8]
+size = Vector3( 0.06, 0.26, 10 )
 subdivide_depth = 32
 
-[sub_resource type="CubeMesh" id=7]
+[sub_resource type="CubeMesh" id=9]
 size = Vector3( 0.01, 0.1, 10 )
 subdivide_width = 5
 subdivide_height = 5
 subdivide_depth = 512
 
-[sub_resource type="CubeMesh" id=8]
-size = Vector3( 5, 3, 0.1 )
+[sub_resource type="CubeMesh" id=10]
+size = Vector3( 4, 2.5, 0.1 )
 subdivide_width = 100
 subdivide_height = 100
 subdivide_depth = 2
 
-[sub_resource type="QuadMesh" id=18]
+[sub_resource type="SpatialMaterial" id=11]
+flags_transparent = true
+flags_world_triplanar = true
+albedo_color = Color( 1, 1, 1, 0.513726 )
+albedo_texture = ExtResource( 8 )
+uv1_triplanar = true
+
+[sub_resource type="QuadMesh" id=12]
 size = Vector2( 0.84, 0.45 )
 
-[sub_resource type="SpatialMaterial" id=19]
+[sub_resource type="SpatialMaterial" id=13]
 flags_transparent = true
 flags_world_triplanar = true
 albedo_color = Color( 0.14902, 1, 0, 0.47451 )
 albedo_texture = ExtResource( 7 )
 
-[sub_resource type="CylinderMesh" id=11]
+[sub_resource type="CylinderMesh" id=14]
 top_radius = 0.03
 bottom_radius = 0.03
 height = 0.01
 
-[sub_resource type="CylinderMesh" id=12]
+[sub_resource type="CylinderMesh" id=15]
 top_radius = 0.005
 bottom_radius = 0.005
 
-[sub_resource type="SpatialMaterial" id=13]
+[sub_resource type="SpatialMaterial" id=16]
 flags_transparent = true
 flags_no_depth_test = true
 
-[sub_resource type="SpatialMaterial" id=14]
+[sub_resource type="SpatialMaterial" id=17]
 flags_transparent = true
 albedo_color = Color( 0.129412, 0.568627, 0.258824, 0.419608 )
 
-[sub_resource type="CubeMesh" id=15]
+[sub_resource type="CubeMesh" id=18]
 size = Vector3( 0.3, 0.3, 0.01 )
 
-[sub_resource type="SphereMesh" id=16]
+[sub_resource type="SphereMesh" id=19]
 radius = 0.02
 height = 0.04
 
-[sub_resource type="CubeMesh" id=17]
+[sub_resource type="CubeMesh" id=20]
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
@@ -113,10 +120,7 @@ directional_shadow_max_distance = 50.0
 [node name="ARVROrigin" parent="." instance=ExtResource( 10 )]
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
-near = 0.01
 far = 10.0
-debug_disable_window_position = true
-debug_emulate_vrpn = true
 
 [node name="Ground global bw" type="MeshInstance" parent="."]
 transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
@@ -126,6 +130,7 @@ material/0 = null
 
 [node name="Ground2 start wall" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50 )
+visible = false
 extra_cull_margin = 1000.0
 mesh = SubResource( 5 )
 material/0 = null
@@ -133,51 +138,52 @@ material/0 = null
 [node name="Ground3 Yellow Checker" type="MeshInstance" parent="."]
 transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, -1.75, 0 )
 visible = false
-mesh = SubResource( 20 )
-material/0 = SubResource( 21 )
+mesh = SubResource( 6 )
+material/0 = SubResource( 7 )
 
 [node name="Table2" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00687657, 0.179059, -0.364813 )
 
 [node name="Table3" parent="." instance=ExtResource( 5 )]
-transform = Transform( 0.25456, 0, 0, 0, 0.25456, 0, 0, 0, 0.25456, 0.00687657, -0.459681, -0.811733 )
+transform = Transform( 0.25456, 0, 0, 0, 0.25456, 0, 0, 0, 0.25456, -0.0915721, -0.296599, -1.21423 )
 
 [node name="Plank1" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.402765, -0.523442, -4.73225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.86583 )
 extra_cull_margin = 1000.0
-mesh = SubResource( 6 )
+mesh = SubResource( 8 )
 material/0 = ExtResource( 9 )
 
 [node name="Plank2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.00068, -0.005, -5.05 )
 extra_cull_margin = 1000.0
-mesh = SubResource( 6 )
+mesh = SubResource( 8 )
 material/0 = ExtResource( 9 )
 
 [node name="Plank3" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.999316, -0.005, -5.05 )
 cast_shadow = 0
 extra_cull_margin = 1000.0
-mesh = SubResource( 6 )
-material/0 = ExtResource( 9 )
+mesh = SubResource( 8 )
+material/0 = null
 
 [node name="Plank4" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.059, 1.136, -3.82 )
 extra_cull_margin = 1000.0
-mesh = SubResource( 7 )
+mesh = SubResource( 9 )
 material/0 = ExtResource( 9 )
 
 [node name="powerwall" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.349, 0.677 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -0.109 )
 visible = false
 extra_cull_margin = 1000.0
-mesh = SubResource( 8 )
-material/0 = null
+mesh = SubResource( 10 )
+material/0 = SubResource( 11 )
 
 [node name="Screen" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.297876 )
-mesh = SubResource( 18 )
-material/0 = SubResource( 19 )
+visible = false
+mesh = SubResource( 12 )
+material/0 = SubResource( 13 )
 
 [node name="Ui" type="CanvasLayer" parent="."]
 
@@ -194,51 +200,51 @@ script = ExtResource( 6 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0 )
 
 [node name="MeshInstance5" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.094563, -0.531681 )
-mesh = SubResource( 11 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.203763, 0.0548845 )
+mesh = SubResource( 14 )
 material/0 = null
 
 [node name="MeshInstance8" type="MeshInstance" parent="Targets/MeshInstance5"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.00198, 2.98023e-08 )
-mesh = SubResource( 12 )
+mesh = SubResource( 15 )
 material/0 = null
 
 [node name="MeshInstance6" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.235585, 0.205284, -0.391951 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.235585, 0.205284, 0.0303617 )
 extra_cull_margin = 15405.4
-mesh = SubResource( 11 )
-material/0 = SubResource( 13 )
+mesh = SubResource( 14 )
+material/0 = SubResource( 16 )
 
 [node name="MeshInstance9" type="MeshInstance" parent="Targets/MeshInstance6"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.00067, 3.72529e-08 )
-mesh = SubResource( 12 )
+mesh = SubResource( 15 )
 material/0 = null
 
 [node name="MeshInstance7" type="MeshInstance" parent="Targets"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.564576, 0.148463, 0.159 )
-mesh = SubResource( 11 )
+mesh = SubResource( 14 )
 material/0 = null
 
 [node name="MeshInstance10" type="MeshInstance" parent="Targets/MeshInstance7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.01128, 4.47035e-08 )
-mesh = SubResource( 12 )
-material/0 = SubResource( 14 )
+mesh = SubResource( 15 )
+material/0 = SubResource( 17 )
 
 [node name="MeshInstance5" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.142694, 0, -0.287335 )
-mesh = SubResource( 15 )
+visible = false
+mesh = SubResource( 18 )
 material/0 = null
 
 [node name="Sphere" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.303, 0 )
-mesh = SubResource( 16 )
+mesh = SubResource( 19 )
 material/0 = null
 script = ExtResource( 2 )
 
 [node name="Block" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.21814, 0, -2.15115 )
-visible = false
-mesh = SubResource( 17 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.21814, 0, 10.0484 )
+mesh = SubResource( 20 )
 material/0 = ExtResource( 9 )
 
 [editable path="ARVROrigin"]
