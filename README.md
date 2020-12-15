@@ -28,6 +28,5 @@ trans_pro t
 # Debugging Monitor/Powerwall
 1. ARVRCamera in scene:
 `debug_disable_window_position = true; debug_emulate_vrpn = true`
-2. Monitor measures `Powerwallinterface.cpp:612`
-3. `mono_debug` in `Powerwallinterface.cpp:522`
-4. 
+2. `g_arvr_data->home_debug = false;` in `Powerwallinterface.cpp:541`
+3. In godot: `bool red_cyan_debug = true;` in `arvr_interface_gdnative.cpp:297`

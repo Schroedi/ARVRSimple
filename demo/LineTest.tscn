@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Sphere.gd" type="Script" id=2]
@@ -104,6 +104,9 @@ height = 0.04
 
 [sub_resource type="CubeMesh" id=20]
 
+[sub_resource type="CubeMesh" id=21]
+size = Vector3( 0.2, 0.2, 0.2 )
+
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
 
@@ -121,6 +124,8 @@ directional_shadow_max_distance = 50.0
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
 far = 10.0
+debug_disable_window_position = true
+debug_emulate_vrpn = true
 
 [node name="Ground global bw" type="MeshInstance" parent="."]
 transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
@@ -200,7 +205,7 @@ script = ExtResource( 6 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0 )
 
 [node name="MeshInstance5" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.203763, 0.0548845 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.219124, -0.413924 )
 mesh = SubResource( 14 )
 material/0 = null
 
@@ -210,7 +215,7 @@ mesh = SubResource( 15 )
 material/0 = null
 
 [node name="MeshInstance6" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.235585, 0.205284, 0.0303617 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.235585, 0.0574278, 0.0303617 )
 extra_cull_margin = 15405.4
 mesh = SubResource( 14 )
 material/0 = SubResource( 16 )
@@ -221,7 +226,7 @@ mesh = SubResource( 15 )
 material/0 = null
 
 [node name="MeshInstance7" type="MeshInstance" parent="Targets"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.564576, 0.148463, 0.159 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.0607328, 0.148463, 0.159 )
 mesh = SubResource( 14 )
 material/0 = null
 
@@ -246,5 +251,10 @@ script = ExtResource( 2 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.21814, 0, 10.0484 )
 mesh = SubResource( 20 )
 material/0 = ExtResource( 9 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155522, -0.44066 )
+mesh = SubResource( 21 )
+material/0 = null
 
 [editable path="ARVROrigin"]

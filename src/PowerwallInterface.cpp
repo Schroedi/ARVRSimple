@@ -11,7 +11,9 @@
 #include <iostream>
 #include <cmath>
 #include "utils.h"
-
+#include "linalg.h"
+using namespace linalg::aliases;
+using namespace linalg::ostream_overloads;
 
 arvr_data_struct *g_arvr_data = nullptr;
 
@@ -88,7 +90,7 @@ godot_vector3 _get_eye_pos(void *p_data, int p_eye) {
     return ret;
 }
 
-// reimplementation of openGL projection matrix junction
+// reimplementation of openGL projection matrix junction -> col-major
 void _arvr_set_frustum(godot_real *p_projection, godot_real p_left, godot_real p_right, godot_real p_bottom, godot_real p_top, godot_real p_near, godot_real p_far) {
     godot_real x = 2 * p_near / (p_right - p_left);
     godot_real y = 2 * p_near / (p_top - p_bottom);
@@ -322,6 +324,8 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
     arvr_data->vn = api->godot_vector3_cross(&arvr_data->vr, &arvr_data->vu);
     arvr_data->vn = api->godot_vector3_normalized(&arvr_data->vn);
+    //printf("vn: ");
+    //printVector(&arvr_data->vn);
 
     // Compute the screen corner vectors.
     arvr_data->va = api->godot_vector3_operator_subtract(&arvr_data->pa, &pe);
@@ -330,61 +334,120 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
     // Find the distance from the eye to screen plane.
     float d = - api->godot_vector3_dot(&arvr_data->vn, &arvr_data->va);
+    //printf("d: %f\n", d);
 
     // Find the extent of the perpendicular projection.
-    float l = api->godot_vector3_dot(&arvr_data->vr, &arvr_data->va) * n / d;
-    float r = api->godot_vector3_dot(&arvr_data->vr, &arvr_data->vb) * n / d;
-    float b = api->godot_vector3_dot(&arvr_data->vu, &arvr_data->va) * n / d;
-    float t = api->godot_vector3_dot(&arvr_data->vu, &arvr_data->vc) * n / d;
+    float nd = n / d;
+    float l = api->godot_vector3_dot(&arvr_data->vr, &arvr_data->va) * nd;
+    float r = api->godot_vector3_dot(&arvr_data->vr, &arvr_data->vb) * nd;
+    float b = api->godot_vector3_dot(&arvr_data->vu, &arvr_data->va) * nd;
+    float t = api->godot_vector3_dot(&arvr_data->vu, &arvr_data->vc) * nd;
 
     // Load the perpendicular projection.
     //_arvr_set_frustumT(p_projection, l, r, b, t, n, f);
     _arvr_set_frustum(p_projection, l, r, b, t, n, f);
 
+
     //godot_transform P = _camToTransformT(p_projection);
     godot_transform P = _camToTransform(p_projection);
+    float4x4 Pm(p_projection);
+    //Pm = transpose(Pm);
+    float4x4  Pt = linalg::identity;
+    Pt[3] = {-api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
+             -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y),
+             -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z),
+             1};
 
-    // Rotate the projection to be non-perpendicular. (needed for projection planes not alignet with the XY plane)
-    // This aligns the projection canvas plane with the OpenGL xy-plane
-    // transposed rotation matrix M^T
-    godot_basis basis;
-    api->godot_basis_new(&basis);
+    float4x4 Pcomplete = linalg::identity;
+    std::cout << "Pt: " << Pt << std::endl;
 
-//    {
-//        godot_vector3 t1, t2, t3;
-//        float rx = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_X);
-//        float ry = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_Y);
-//        float rz = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_Z);
-//        float ux = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_X);
-//        float uy = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_Y);
-//        float uz = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_Z);
-//        float nx = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_X);
-//        float ny = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_Y);
-//        float nz = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_Z);
-//        api->godot_vector3_new(&t1, rx, ux, nx);
-//        api->godot_vector3_new(&t2, ry, uy, ny);
-//        api->godot_vector3_new(&t3, rz, uz, nz);
-//        api->godot_basis_new_with_rows(&basis, &t1, &t2, &t3);
-//    }
-    api->godot_basis_new_with_rows(&basis, &arvr_data->vr, &arvr_data->vu, &arvr_data->vn);
+    Pcomplete = mul(Pm, Pt);
+    std::cout << "complete: " << Pcomplete << std::endl;
 
-    godot_vector3 off;
-    api->godot_vector3_new(&off, 0,0,0);
-    //off = api->godot_vector3_operator_subtract(&off, &pe); // use the position here or in the get eye pos function
-    //off = api->godot_vector3_operator_add(&off, &pe); // use the position here or in the get eye pos function
-    godot_transform Mt;
-    api->godot_transform_new(&Mt, &basis, &off);
+    p_projection[0] = Pcomplete[0][0];
+    p_projection[1] = Pcomplete[0][1];
+    p_projection[2] = Pcomplete[0][2];
+    p_projection[3] = Pcomplete[0][3];
+    p_projection[4] = Pcomplete[1][0];
+    p_projection[5] = Pcomplete[1][1];
+    p_projection[6] = Pcomplete[1][2];
+    p_projection[7] = Pcomplete[1][3];
+    p_projection[8] = Pcomplete[2][0];
+    p_projection[9] = Pcomplete[2][1];
+    p_projection[10] = Pcomplete[2][2];
+    p_projection[11] = Pcomplete[2][3];
+    p_projection[12] = Pcomplete[3][0];
+    p_projection[13] = Pcomplete[3][1];
+    p_projection[14] = Pcomplete[3][2];
+    p_projection[15] = Pcomplete[3][3];
+
+
+//    p_projection[0]  = 1.62;
+//    p_projection[1]  = 0;
+//    p_projection[2]  = 0;
+//    p_projection[3]  = 0;
+//
+//    p_projection[4]  = 0;
+//    p_projection[5]  = 2.95;
+//    p_projection[6]  = 0;
+//    p_projection[7]  = 0;
+//
+//    p_projection[8]  = -0.018;
+//    p_projection[9]  = -0.511;
+//    p_projection[10] = -1;
+//    p_projection[11] = -1;
+//
+//    p_projection[12] = 0;
+//    p_projection[13] = 0.66;
+//    p_projection[14] = 0.46;
+//    p_projection[15] = 0.66;
+
+    printf("complete: ");
+    printCam(p_projection);
+    printf("\n");
+    return;
+
+//    // Rotate the projection to be non-perpendicular. (needed for projection planes not alignet with the XY plane)
+//    // This aligns the projection canvas plane with the OpenGL xy-plane
+//    // transposed rotation matrix M^T
+//    godot_basis basis;
+//    api->godot_basis_new(&basis);
+//
+////    {
+////        godot_vector3 t1, t2, t3;
+////        float rx = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_X);
+////        float ry = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_Y);
+////        float rz = api->godot_vector3_get_axis(&g_arvr_data->vr, GODOT_VECTOR3_AXIS_Z);
+////        float ux = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_X);
+////        float uy = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_Y);
+////        float uz = api->godot_vector3_get_axis(&g_arvr_data->vu, GODOT_VECTOR3_AXIS_Z);
+////        float nx = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_X);
+////        float ny = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_Y);
+////        float nz = api->godot_vector3_get_axis(&g_arvr_data->vn, GODOT_VECTOR3_AXIS_Z);
+////        api->godot_vector3_new(&t1, rx, ux, nx);
+////        api->godot_vector3_new(&t2, ry, uy, ny);
+////        api->godot_vector3_new(&t3, rz, uz, nz);
+////        api->godot_basis_new_with_rows(&basis, &t1, &t2, &t3);
+////    }
+//    api->godot_basis_new_with_rows(&basis, &arvr_data->vr, &arvr_data->vu, &arvr_data->vn);
+//
+//    godot_vector3 off;
+//    api->godot_vector3_new(&off, 0,0,0);
+//    //off = api->godot_vector3_operator_subtract(&off, &pe); // use the position here or in the get eye pos function
+//    //off = api->godot_vector3_operator_add(&off, &pe); // use the position here or in the get eye pos function
+//    godot_transform Mt;
+//    api->godot_transform_new(&Mt, &basis, &off);
 
     godot_transform transform_for_eye;
     api->godot_transform_new_identity(&transform_for_eye);
     pe = api->godot_vector3_operator_multiply_scalar(&pe, -1);
     transform_for_eye = api->godot_transform_translated(&transform_for_eye, &pe);
 
-    godot_transform test;
-    api->godot_transform_new_identity(&test);
-    godot_vector3 test_off;
-    api->godot_vector3_new(&test_off, 0,1,0);
-    test = api->godot_transform_translated(&test, &test_off);
+//    godot_transform test;
+//    api->godot_transform_new_identity(&test);
+//    godot_vector3 test_off;
+//    api->godot_vector3_new(&test_off, 0,1,0);
+//    test = api->godot_transform_translated(&test, &test_off);
 
     godot_transform PMT;
     api->godot_transform_new_identity(&PMT);
@@ -394,13 +457,14 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     //PMT = api->godot_transform_operator_multiply(&transform_for_eye, &PMT);
 
     PMT = api->godot_transform_operator_multiply(&PMT, &P);
-    PMT = api->godot_transform_operator_multiply(&PMT, &test);
+    //PMT = api->godot_transform_operator_multiply(&PMT, &test);
 //    PMT = api->godot_transform_operator_multiply(&PMT, &Mt);
-//    PMT = api->godot_transform_operator_multiply(&PMT, &transform_for_eye);
+    PMT = api->godot_transform_operator_multiply(&PMT, &transform_for_eye);
 
     // back to opengl
     //TransformToCamT(PMT, p_projection);
     //TransformToCam(PMT, p_projection);
+
 
     // just use the projection matrix P
     //TransformToCamT(P, p_projection);
@@ -510,7 +574,7 @@ void updatePowerwallCoords() {// TODO fix this (interactive monitor placement wi
 void updateOpentrack(arvr_data_struct *arvr_data) {
     if (arvr_data->opentrack->update()) {
         // translation
-        float x = static_cast<float>(-arvr_data->opentrack->currentPose[0]) / 100.0f;
+        float x = static_cast<float>(arvr_data->opentrack->currentPose[0]) / 100.0f;
         float y = static_cast<float>(arvr_data->opentrack->currentPose[1]) / 100.0f;
         float z = static_cast<float>(arvr_data->opentrack->currentPose[2]) / 100.0f;
         api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, x);
@@ -538,7 +602,7 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform);
 
     // debugging settings
-    g_arvr_data->home_debug = false;
+    g_arvr_data->home_debug = true;
 
     // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates
