@@ -23,8 +23,7 @@ namespace {
 const char *kName = "Powerwall";
 } // namespace
 
-// Eye position in world space
-godot_vector3 _get_eye_pos(void *p_data, int p_eye) {
+godot_transform _get_eye_transform(void *p_data, int p_eye) {
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // Invalid arvr data
 
@@ -35,7 +34,6 @@ godot_vector3 _get_eye_pos(void *p_data, int p_eye) {
     godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
 
     godot_basis head_rotation;
-    //api->godot_basis_new_with_euler(&head_rotation, &g_arvr_data->re);
     api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
 
     // create our transform from head center to eye
@@ -62,17 +60,23 @@ godot_vector3 _get_eye_pos(void *p_data, int p_eye) {
 
     // Now construct our full transform
     godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
+    //printTransform(reference_frame);
 
     godot_transform transform; // = g_arvr_data->godot_cam_transform;
     api->godot_transform_new_identity(&transform);
 
-    //transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
+    transform = api->godot_transform_operator_multiply(&transform, &g_arvr_data->godot_cam_transform[p_eye]);
+    transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
     transform = api->godot_transform_operator_multiply(&transform, &hmd_transform);
     transform = api->godot_transform_operator_multiply(&transform, &eye_offset_transform);
 
-//    transform = api->godot_transform_operator_multiply(&reference_frame, &transform);
-//    transform = api->godot_transform_operator_multiply(&hmd_transform, &transform);
-//    transform = api->godot_transform_operator_multiply(&eye_offset_transform, &transform);
+
+    return transform;
+};
+
+// Eye position in world space
+godot_vector3 _get_eye_pos(void *p_data, int p_eye) {
+    godot_transform transform = _get_eye_transform(p_data, p_eye);
 
     godot_vector3 ret;
     api->godot_vector3_new(&ret,0,0,0);
@@ -206,12 +210,13 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, __unused godot_in
     assert(arvr_data != nullptr); // Invalid arvr data
 
     // save the last camera transform we got from godot
-    arvr_data->godot_cam_transform = *p_cam_transform;
+    arvr_data->godot_cam_transform[p_eye] = *p_cam_transform;
 
     godot_transform ret;
     api->godot_transform_new_identity(&ret);
     return ret;
 
+    //return _get_eye_transform(p_data, p_eye);
 }
 
 
@@ -227,10 +232,13 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float f = p_z_far;
 
     godot_vector3 pe = _get_eye_pos(p_data, p_eye);
+    godot_vector3 pa = api->godot_transform_xform_vector3(&arvr_data->godot_cam_transform[p_eye], &arvr_data->pa);
+    godot_vector3 pb = api->godot_transform_xform_vector3(&arvr_data->godot_cam_transform[p_eye], &arvr_data->pb);
+    godot_vector3 pc = api->godot_transform_xform_vector3(&arvr_data->godot_cam_transform[p_eye], &arvr_data->pc);
 
     // Compute an orthonormal basis for the screen.
-    arvr_data->vr = api->godot_vector3_operator_subtract(&arvr_data->pb, &arvr_data->pa);
-    arvr_data->vu = api->godot_vector3_operator_subtract(&arvr_data->pc, &arvr_data->pa);
+    arvr_data->vr = api->godot_vector3_operator_subtract(&pb, &pa);
+    arvr_data->vu = api->godot_vector3_operator_subtract(&pc, &pa);
 
     arvr_data->vr = api->godot_vector3_normalized(&arvr_data->vr);
     arvr_data->vu = api->godot_vector3_normalized(&arvr_data->vu);
@@ -241,9 +249,9 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     //printVector(&arvr_data->vn);
 
     // Compute the screen corner vectors.
-    arvr_data->va = api->godot_vector3_operator_subtract(&arvr_data->pa, &pe);
-    arvr_data->vb = api->godot_vector3_operator_subtract(&arvr_data->pb, &pe);
-    arvr_data->vc = api->godot_vector3_operator_subtract(&arvr_data->pc, &pe);
+    arvr_data->va = api->godot_vector3_operator_subtract(&pa, &pe);
+    arvr_data->vb = api->godot_vector3_operator_subtract(&pb, &pe);
+    arvr_data->vc = api->godot_vector3_operator_subtract(&pc, &pe);
 
     // Find the distance from the eye to screen plane.
     float d = - api->godot_vector3_dot(&arvr_data->vn, &arvr_data->va);
@@ -291,6 +299,30 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     p_projection[13] = Pcomplete[3][1];
     p_projection[14] = Pcomplete[3][2];
     p_projection[15] = Pcomplete[3][3];
+
+    // set eye offset for the shader - we don't ned to use it for the matrix calculation
+    // as this is already included in our eye position we work with
+    {
+        godot_vector3 offset;
+        godot_basis head_rotation;
+        godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
+        api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
+        if (p_eye == 1) {
+            // left eye
+            api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+            offset = api->godot_basis_xform(&head_rotation, &offset);
+        } else if (p_eye == 2) {
+            // right eye
+            api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
+            offset = api->godot_basis_xform(&head_rotation, &offset);
+        } else {
+            // eye 0 for culling
+            api->godot_vector3_new(&offset, 0,0,0);
+        }
+        // the offset has it's origin in the cyclope's eye
+        arvr_api->godot_pw_set_offset(&offset);
+        //printf("plugin offset x: %f eye: %d\n", api->godot_vector3_get_axis(&offset, godot_vector3_axis::GODOT_VECTOR3_AXIS_X), p_eye);
+    }
 
 //    printf("complete: ");
 //    printCam(p_projection);
@@ -372,29 +404,6 @@ void godot_arvr_process(void *p_data) {
     arvr_api->godot_pw_set_pb(&arvr_data->pb);
     arvr_api->godot_pw_set_pc(&arvr_data->pc);
     arvr_api->godot_pw_set_pe(&arvr_data->pe);
-
-    //    // set eye offset for the shader - we don't ned to use it for the matrix calculation
-//    // as this is already included in our eye position we work with
-//    {
-//        godot_vector3 offset;
-//        godot_basis head_rotation;
-//        godot_real world_scale = 1;//arvr_api->godot_arvr_get_worldscale();
-//        api->godot_basis_new_with_euler_quat(&head_rotation, &arvr_data->re);
-//        if (p_eye == 1) {
-//            // left eye
-//            api->godot_vector3_new(&offset, -arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-//            offset = api->godot_basis_xform(&head_rotation, &offset);
-//        } else if (p_eye == 2) {
-//            // right eye
-//            api->godot_vector3_new(&offset, arvr_data->iod_m * 0.5 * world_scale, 0.0, 0.0);
-//            offset = api->godot_basis_xform(&head_rotation, &offset);
-//        } else {
-//            // eye 0 for culling
-//            api->godot_vector3_new(&offset, 0,0,0);
-//        }
-//        // the offset has it's origin in the cyclope's eye
-//        arvr_api->godot_pw_set_offset(&offset);
-//    }
 }
 
 /**
@@ -451,7 +460,9 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     g_arvr_data->iod_m = 6.5 / 100.0;
     g_arvr_data->enable_edge_adjust = 0;
     g_arvr_data->vrpnTracker = nullptr;
-    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform);
+    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[0]);
+    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[1]);
+    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[2]);
 
     // debugging settings
     g_arvr_data->home_debug = true;

@@ -33,19 +33,23 @@ func _process(delta):
 	if (Input.is_action_just_pressed("edge_mode")):
 		var curr = powerwall.get_edge_adjust()
 		curr = curr ^ 0x1
-		print(powerwall.set_edge_adjust(curr))
+		powerwall.set_edge_adjust(curr)
+		print("edge_adjust %s" % str((curr & 0x1)>0))
 	if (Input.is_action_just_pressed("edge_debug")):
 			var curr = powerwall.get_edge_adjust()
 			curr = curr ^ 0x2
-			print(powerwall.set_edge_adjust(curr))
+			powerwall.set_edge_adjust(curr)
+			print("color_debug %s" % str((curr & 0x2)>0))
 	if (Input.is_action_just_pressed("w_debug")):
 			var curr = powerwall.get_edge_adjust()
 			curr = curr ^ 0x4
-			print(powerwall.set_edge_adjust(curr))
+			powerwall.set_edge_adjust(curr)
+			print("divw %s" % str((curr & 0x4)>0))
 	if (Input.is_action_just_pressed("trans_pro")):
 			var curr = powerwall.get_edge_adjust()
 			curr = curr ^ 0x8
-			print(powerwall.set_edge_adjust(curr))
+			powerwall.set_edge_adjust(curr)
+			print("trans_pro %s" % str((curr & 0x8)>0))
 		
 	# debug movement
 #	if (Input.is_key_pressed(KEY_LEFT)):
