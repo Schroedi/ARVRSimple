@@ -1,13 +1,12 @@
 extends ARVRCamera
+class_name PowerwallCamera
 
 var powerwall = preload("res://addons/powerwall/powerwall.gdns").new()
 
 export var debug_disable_window_position = false
 export var debug_emulate_vrpn = false
 
-func _ready():
-	
-	
+func _ready():	
 	# Find the Powerwall interface
 	var arvr_interface = ARVRServer.find_interface("Powerwall")
 	if arvr_interface and arvr_interface.initialize():

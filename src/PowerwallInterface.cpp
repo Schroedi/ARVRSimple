@@ -438,16 +438,18 @@ void updateOpentrack(arvr_data_struct *arvr_data) {
         float x = static_cast<float>(arvr_data->opentrack->currentPose[0]) / 100.0f;
         float y = static_cast<float>(arvr_data->opentrack->currentPose[1]) / 100.0f;
         float z = static_cast<float>(arvr_data->opentrack->currentPose[2]) / 100.0f;
-        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, x);
+        api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, -x);
         api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, y);
         api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, z);
 
         // rotation
-//        godot_vector3 angles;
-//        api->godot_vector3_new(&angles, static_cast<float>(g_arvr_data->opentrack->currentPose[3]),
-//                static_cast<float>(g_arvr_data->opentrack->currentPose[4]),
-//                static_cast<float>(g_arvr_data->opentrack->currentPose[5]));
-//        quat_set_euler_yxz(&g_arvr_data->re, angles);
+        godot_vector3 angles;
+        float to_rad = 1.0 / 360.0 * 2 * M_PI;
+        api->godot_vector3_new(&angles,
+                               static_cast<float>(g_arvr_data->opentrack->currentPose[3] * to_rad),
+                               static_cast<float>(g_arvr_data->opentrack->currentPose[4] * to_rad),
+                               static_cast<float>(g_arvr_data->opentrack->currentPose[5] * to_rad));
+        quat_set_euler_yxz(&g_arvr_data->re, angles);
     }
 }
 
@@ -470,10 +472,15 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates
     if (g_arvr_data->home_debug) {
-        // monitor at home -- tracking center is horizontally centered at the upper edge
-        api->godot_vector3_new(&g_arvr_data->pa, -.41, -0.45, 0); // buttom left
-        api->godot_vector3_new(&g_arvr_data->pb, .41, -0.45, -0); // buttom right
-        api->godot_vector3_new(&g_arvr_data->pc, -.41, 0.0, -0);  // upper left
+        // monitor at home -- tracking center is horizontally centered at the UPPER edge
+//        api->godot_vector3_new(&g_arvr_data->pa, -.41, -0.35, 0); // buttom left
+//        api->godot_vector3_new(&g_arvr_data->pb, .41, -0.35, -0); // buttom right
+//        api->godot_vector3_new(&g_arvr_data->pc, -.41, 0.0, -0);  // upper left
+
+        // monitor at home -- tracking center is horizontally centered at the LOWER edge
+        api->godot_vector3_new(&g_arvr_data->pa, -.4, -0.35/2.0, 0); // buttom left
+        api->godot_vector3_new(&g_arvr_data->pb,  .4, -0.35/2.0, -0); // buttom right
+        api->godot_vector3_new(&g_arvr_data->pc, -.4, 0.35/2.0, -0);  // upper left
     } else {
         api->godot_vector3_new(&g_arvr_data->pa, -2, 0.0, 0);
         api->godot_vector3_new(&g_arvr_data->pb,  2, 0.0, 0);
