@@ -5,6 +5,10 @@
 #ifndef POWERWALL_UTILS_H
 #define POWERWALL_UTILS_H
 
+#include <cmath>
+using std::sin;
+using std::cos;
+
 // set_euler_yxz expects a vector containing the Euler angles in the format
 // (ax,ay,az), where ax is the angle of rotation around x axis,
 // and similar for other axes.

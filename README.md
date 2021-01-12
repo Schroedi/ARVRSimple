@@ -11,7 +11,9 @@ Currently the projection seems slightly off. It looks like the rotation center i
 # Compiling
 1. Check out the project with submodules (git submodule update --init)
 2. Build the project with cmake
-3. Delete the cmake lines in the VRPN project in the build folder that check for in tree builds. They seem to be broken. Just follow the error and delete the loop - build again
+ `cmake -DGODOT_HEADERS_DIR=/home/chhristoph/Powerwall/godot/modules/gdnative/include`
+ `make -j8`
+3. Obsolete (Delete the cmake lines in the VRPN project in the build folder that check for in tree builds. They seem to be broken. Just follow the error and delete the loop - build again)
 4. Open the sample in the demo folder
 
 # Thanks

@@ -5,7 +5,7 @@ resource_name = "LegMat"
 params_specular_mode = 2
 albedo_color = Color( 0.714844, 0.552887, 0, 1 )
 metallic_specular = 0.0
-roughness = 0.57
+roughness = 0.74
 
 [sub_resource type="CubeMesh" id=2]
 resource_name = "Leg"
@@ -20,8 +20,8 @@ resource_name = "TableMat"
 flags_vertex_lighting = true
 params_diffuse_mode = 1
 albedo_color = Color( 0.886275, 0.0431373, 0.0431373, 1 )
-metallic = 0.4
-roughness = 0.0
+metallic = 0.42
+roughness = 0.64
 
 [sub_resource type="CubeMesh" id=4]
 material = SubResource( 3 )

@@ -159,8 +159,8 @@ void VRPN_CALLBACK tracker_callback(void* p_data, const vrpn_TRACKERCB t ){
     auto *arvr_data = (arvr_data_struct *)p_data;
 
     api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X, t.pos[0]);
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, t.pos[2]);
-    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, -t.pos[1]);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y, t.pos[1]);
+    api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, t.pos[2]);
 
     api->godot_quat_set_x(&arvr_data->re, t.quat[0]);
     api->godot_quat_set_y(&arvr_data->re, t.quat[2]);
