@@ -267,9 +267,8 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     // Load the perpendicular projection.
     _arvr_set_frustum(p_projection, l, r, b, t, n, f);
 
-    godot_transform P = _camToTransform(p_projection);
     float4x4 Pm(p_projection);
-    float4x4  Pt = linalg::identity;
+    float4x4 Pt = linalg::identity;
     Pt[3] = {-api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
              -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y),
              -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z),
