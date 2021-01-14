@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Powerwall"
-run/main_scene="res://LineTest.tscn"
+run/main_scene="res://BasicTest.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -63,4 +63,5 @@ trans_pro={
 [rendering]
 
 quality/depth_prepass/enable=false
+environment/default_clear_color=Color( 0.894118, 0.27451, 0.607843, 1 )
 environment/default_environment="res://default_env.tres"

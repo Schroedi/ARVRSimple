@@ -2,10 +2,8 @@
 
 [sub_resource type="SpatialMaterial" id=1]
 resource_name = "LegMat"
-params_specular_mode = 2
 albedo_color = Color( 0.714844, 0.552887, 0, 1 )
 metallic_specular = 0.0
-roughness = 0.74
 
 [sub_resource type="CubeMesh" id=2]
 resource_name = "Leg"
