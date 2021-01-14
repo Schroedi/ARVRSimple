@@ -121,7 +121,6 @@ environment = SubResource( 2 )
 [node name="DirectionalLight2" type="DirectionalLight" parent="."]
 transform = Transform( 0.701352, -0.330856, 0.631379, -0.0442959, 0.863813, 0.501862, -0.711437, -0.379949, 0.591182, 0, 0.791846, 0 )
 shadow_enabled = true
-shadow_contact = 0.1
 directional_shadow_normal_bias = 0.4
 directional_shadow_depth_range = 1
 directional_shadow_max_distance = 23.9
@@ -133,7 +132,6 @@ light_energy = 0.95
 light_specular = 0.0
 light_bake_mode = 2
 shadow_enabled = true
-shadow_contact = 0.06
 directional_shadow_mode = 1
 directional_shadow_max_distance = 50.0
 
@@ -149,7 +147,7 @@ mesh = SubResource( 4 )
 material/0 = null
 
 [node name="Ground2 start wall" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.781254, -50 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50 )
 extra_cull_margin = 1000.0
 mesh = SubResource( 5 )
 material/0 = null
