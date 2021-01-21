@@ -28,6 +28,10 @@ config/icon="res://icon.png"
 
 window/dpi/allow_hidpi=true
 
+[editor_plugins]
+
+enabled=PoolStringArray( "scatter" )
+
 [gdnative]
 
 singletons=[ "res://addons/powerwall/powerwall.gdnlib" ]
