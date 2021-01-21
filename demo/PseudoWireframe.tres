@@ -10,11 +10,11 @@ void fragment() {
 	float dy = max(UV.y, 1.0 - UV.y);
 	float d = max(dx, dy);
 	if (d < .99) {
-		discard;
+		//discard;
 	}
 	//EMISSION = vec3(0.0,1.0,1.0);
-	//ALBEDO = vec3(dx,dy,1.0);
-	ALBEDO = vec3(1.0, 0.0, 0.0);
+	ALBEDO = vec3(UV.x,0,0);
+	//ALBEDO = vec3(1.0, 0.0, 0.0);
 }
 "
 

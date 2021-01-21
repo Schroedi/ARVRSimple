@@ -62,6 +62,8 @@ trans_pro={
 
 [rendering]
 
+quality/directional_shadow/size=8192
+quality/directional_shadow/size.mobile=4096
 quality/depth_prepass/enable=false
 environment/default_clear_color=Color( 0.894118, 0.27451, 0.607843, 1 )
 environment/default_environment="res://default_env.tres"

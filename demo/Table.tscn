@@ -1,28 +1,18 @@
 [gd_scene load_steps=5 format=2]
 
-[sub_resource type="SpatialMaterial" id=1]
-resource_name = "LegMat"
-albedo_color = Color( 0.714844, 0.552887, 0, 1 )
-metallic_specular = 0.0
+[ext_resource path="res://TableTopMat.tres" type="Material" id=1]
+[ext_resource path="res://TableLegMat.tres" type="Material" id=2]
 
-[sub_resource type="CubeMesh" id=2]
+[sub_resource type="CubeMesh" id=1]
 resource_name = "Leg"
-material = SubResource( 1 )
+material = ExtResource( 2 )
 size = Vector3( 0.2, 1.6, 0.2 )
 subdivide_width = 3
 subdivide_height = 3
 subdivide_depth = 3
 
-[sub_resource type="SpatialMaterial" id=3]
-resource_name = "TableMat"
-flags_vertex_lighting = true
-params_diffuse_mode = 1
-albedo_color = Color( 0.886275, 0.0431373, 0.0431373, 1 )
-metallic = 0.42
-roughness = 0.64
-
-[sub_resource type="CubeMesh" id=4]
-material = SubResource( 3 )
+[sub_resource type="CubeMesh" id=2]
+material = ExtResource( 1 )
 size = Vector3( 2.2, 0.1, 1.2 )
 subdivide_width = 30
 subdivide_height = 30
@@ -35,30 +25,30 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.204891, 0.5 )
 visible = false
 extra_cull_margin = 1000.0
-mesh = SubResource( 2 )
+mesh = SubResource( 1 )
 material/0 = null
 
 [node name="Leg2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.204891, 0.5 )
 visible = false
 extra_cull_margin = 1000.0
-mesh = SubResource( 2 )
+mesh = SubResource( 1 )
 material/0 = null
 
 [node name="Leg3" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.204891, -0.5 )
 extra_cull_margin = 1000.0
-mesh = SubResource( 2 )
+mesh = SubResource( 1 )
 material/0 = null
 
 [node name="Leg4" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.204891, -0.5 )
 extra_cull_margin = 1000.0
-mesh = SubResource( 2 )
+mesh = SubResource( 1 )
 material/0 = null
 
 [node name="Surface" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0 )
 extra_cull_margin = 1000.0
-mesh = SubResource( 4 )
+mesh = SubResource( 2 )
 material/0 = null
