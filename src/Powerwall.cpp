@@ -163,8 +163,8 @@ void VRPN_CALLBACK tracker_callback(void* p_data, const vrpn_TRACKERCB t ){
     api->godot_vector3_set_axis(&arvr_data->pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z, t.pos[2]);
 
     api->godot_quat_set_x(&arvr_data->re, t.quat[0]);
-    api->godot_quat_set_y(&arvr_data->re, t.quat[2]);
-    api->godot_quat_set_z(&arvr_data->re, t.quat[1]);
+    api->godot_quat_set_y(&arvr_data->re, t.quat[1]);
+    api->godot_quat_set_z(&arvr_data->re, t.quat[2]);
     api->godot_quat_set_w(&arvr_data->re, t.quat[3]);
 }
 
