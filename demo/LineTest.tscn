@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Sphere.gd" type="Script" id=2]
@@ -9,8 +9,9 @@
 [ext_resource path="res://texture_01.png" type="Texture" id=7]
 [ext_resource path="res://texture_09.png" type="Texture" id=8]
 [ext_resource path="res://WorldBlocksTexture.tres" type="Material" id=9]
-[ext_resource path="res://Table.tscn" type="PackedScene" id=10]
+[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Table.tscn" type="PackedScene" id=12]
 
 [sub_resource type="ProceduralSky" id=1]
 sun_latitude = 72.25
@@ -96,19 +97,19 @@ flags_no_depth_test = true
 flags_transparent = true
 albedo_color = Color( 0.129412, 0.568627, 0.258824, 0.419608 )
 
-[sub_resource type="SphereMesh" id=19]
+[sub_resource type="SphereMesh" id=18]
 radius = 0.02
 height = 0.04
 
-[sub_resource type="CubeMesh" id=20]
+[sub_resource type="CubeMesh" id=19]
 
-[sub_resource type="CubeMesh" id=21]
+[sub_resource type="CubeMesh" id=20]
 size = Vector3( 0.2, 0.2, 0.2 )
 subdivide_width = 2
 subdivide_height = 2
 subdivide_depth = 2
 
-[sub_resource type="BakedLightmapData" id=22]
+[sub_resource type="BakedLightmapData" id=21]
 bounds = AABB( -28.4387, -10, -15.1599, 56.8774, 20, 30.3198 )
 cell_space_transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, 113.755, 40, 60.6396 )
 cell_subdiv = 9
@@ -143,6 +144,8 @@ directional_shadow_max_distance = 50.0
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
 far = 200.0
+debug_disable_window_position = true
+debug_emulate_vrpn = true
 
 [node name="Ground global bw" type="MeshInstance" parent="."]
 transform = Transform( 100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0 )
@@ -162,10 +165,10 @@ visible = false
 mesh = SubResource( 6 )
 material/0 = SubResource( 7 )
 
-[node name="Table2" parent="." instance=ExtResource( 10 )]
+[node name="Table2" parent="." instance=ExtResource( 12 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00687657, 0.179059, -0.364813 )
 
-[node name="Table3" parent="." instance=ExtResource( 10 )]
+[node name="Table3" parent="." instance=ExtResource( 12 )]
 transform = Transform( 0.25456, 0, 0, 0, 0.25456, 0, 0, 0, 0.25456, -0.0915721, 0.13263, -1.21423 )
 
 [node name="Plank1" type="MeshInstance" parent="."]
@@ -280,32 +283,37 @@ material/0 = SubResource( 17 )
 
 [node name="Sphere" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.303, 0 )
-mesh = SubResource( 19 )
+mesh = SubResource( 18 )
 material/0 = null
 script = ExtResource( 2 )
 
 [node name="BlockInBack" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.21814, 0, 10.0484 )
-mesh = SubResource( 20 )
+mesh = SubResource( 19 )
 material/0 = ExtResource( 9 )
 
 [node name="Cube" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155522, -0.44066 )
-mesh = SubResource( 21 )
+mesh = SubResource( 20 )
 material/0 = null
 
 [node name="BakedLightmap" type="BakedLightmap" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.5686 )
 visible = false
-bake_extents = Vector3( 28.4387, 10, 15.1599 )
-light_data = SubResource( 22 )
+light_data = SubResource( 21 )
 
 [node name="OmniLight" type="OmniLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.36777, 2.76717, -2.14421 )
+visible = false
 shadow_enabled = true
 
 [node name="SpotLight" type="SpotLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.585023, 0.811017, 0, -0.811017, 0.585023, 0.742884, 2.53318, 0 )
+visible = false
 shadow_enabled = true
+
+[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 10 )]
+transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
+visible = false
 
 [editable path="ARVROrigin"]

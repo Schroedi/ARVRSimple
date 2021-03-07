@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/rock_arch/RockArchTex.png" type="Texture" id=1]
+[ext_resource path="res://assets/rock_arch/RockArchNormal.png" type="Texture" id=2]
+[ext_resource path="res://assets/rock_arch/SeepockeTex.png" type="Texture" id=3]
+[ext_resource path="res://assets/rock_arch/RockArch.obj" type="ArrayMesh" id=4]
+
+[sub_resource type="SpatialMaterial" id=11]
+albedo_texture = ExtResource( 1 )
+metallic = 0.15
+roughness = 0.84
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 2 )
+
+[sub_resource type="SpatialMaterial" id=12]
+albedo_texture = ExtResource( 3 )
+metallic = 0.05
+roughness = 0.9
+
+[node name="RockArch" type="MeshInstance"]
+transform = Transform( -0.814713, 0, -0.579864, 0, 1, 0, 0.579864, 0, -0.814713, -3.77886, -0.561198, -9.62625 )
+mesh = ExtResource( 4 )
+material/0 = null
+material/1 = SubResource( 11 )
+material/2 = SubResource( 12 )

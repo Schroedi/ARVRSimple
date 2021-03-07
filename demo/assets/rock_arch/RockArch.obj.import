@@ -1,0 +1,18 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/RockArch.obj-8adbc8c3eff0519db3967c94ceb8954b.mesh"
+
+[deps]
+
+files=[ "res://.import/RockArch.obj-8adbc8c3eff0519db3967c94ceb8954b.mesh" ]
+
+source_file="res://assets/rock_arch/RockArch.obj"
+dest_files=[ "res://.import/RockArch.obj-8adbc8c3eff0519db3967c94ceb8954b.mesh", "res://.import/RockArch.obj-8adbc8c3eff0519db3967c94ceb8954b.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+optimize_mesh=true
