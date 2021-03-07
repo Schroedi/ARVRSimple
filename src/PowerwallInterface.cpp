@@ -66,7 +66,6 @@ godot_transform _get_eye_transform(void *p_data, int p_eye) {
     godot_transform transform;
     api->godot_transform_new_identity(&transform);
 
-    transform = api->godot_transform_operator_multiply(&transform, &g_arvr_data->godot_cam_transform[p_eye]);
     transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
     transform = api->godot_transform_operator_multiply(&transform, &hmd_transform);
     transform = api->godot_transform_operator_multiply(&transform, &eye_offset_transform);
@@ -203,14 +202,13 @@ godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
 }
 
 godot_transform godot_arvr_get_transform_for_eye(void *p_data, __unused godot_int p_eye, godot_transform *p_cam_transform) {
-    // BUG: The code in godot looks like we should only return the offset to the cyclone's eye -- but nobody does that
-    // in the godot VR plugins.
+    // godot requests this for left and right eye and uses the center as cyclop's eye for scene prepare (constructs the frustum planes)
+    // afaik coordinates are expected in world space
+    // the cam_transform seems to be identity in every case
     // The result will be used for culling
     auto *arvr_data = (arvr_data_struct *)p_data;
     assert(arvr_data != nullptr); // Invalid arvr data
 
-    // save the last camera transform we got from godot
-    arvr_data->godot_cam_transform[p_eye] = *p_cam_transform;
 
     godot_transform ret;
     api->godot_transform_new_identity(&ret);
@@ -232,9 +230,9 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
     float f = p_z_far;
 
     godot_vector3 pe = _get_eye_pos(p_data, p_eye);
-    godot_vector3 pa = api->godot_transform_xform_vector3(&arvr_data->godot_cam_transform[p_eye], &arvr_data->pa);
-    godot_vector3 pb = api->godot_transform_xform_vector3(&arvr_data->godot_cam_transform[p_eye], &arvr_data->pb);
-    godot_vector3 pc = api->godot_transform_xform_vector3(&arvr_data->godot_cam_transform[p_eye], &arvr_data->pc);
+    godot_vector3 pa = arvr_data->pa;
+    godot_vector3 pb = arvr_data->pb;
+    godot_vector3 pc = arvr_data->pc;
 
     // Compute an orthonormal basis for the screen.
     arvr_data->vr = api->godot_vector3_operator_subtract(&pb, &pa);
@@ -461,9 +459,6 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     g_arvr_data->iod_m = 6.5 / 100.0;
     g_arvr_data->enable_edge_adjust = 0;
     g_arvr_data->vrpnTracker = nullptr;
-    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[0]);
-    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[1]);
-    api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[2]);
 
     // debugging settings
     g_arvr_data->home_debug = false;
