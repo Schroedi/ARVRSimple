@@ -471,14 +471,9 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates
     if (g_arvr_data->home_debug) {
-        // monitor at home -- tracking center is horizontally centered at the UPPER edge
-//        api->godot_vector3_new(&g_arvr_data->pa, -.41, -0.35, 0); // buttom left
-//        api->godot_vector3_new(&g_arvr_data->pb, .41, -0.35, -0); // buttom right
-//        api->godot_vector3_new(&g_arvr_data->pc, -.41, 0.0, -0);  // upper left
-
         // monitor at home -- tracking center is horizontally centered at the LOWER edge
-        api->godot_vector3_new(&g_arvr_data->pa, -.4, -0.35/2.0, 0); // buttom left
-        api->godot_vector3_new(&g_arvr_data->pb,  .4, -0.35/2.0, -0); // buttom right
+        api->godot_vector3_new(&g_arvr_data->pa, -.4, 0, 0); // buttom left
+        api->godot_vector3_new(&g_arvr_data->pb,  .4, 0/2.0, -0); // buttom right
         api->godot_vector3_new(&g_arvr_data->pc, -.4, 0.35/2.0, -0);  // upper left
     } else {
         api->godot_vector3_new(&g_arvr_data->pa, -2, 0.0, 0);
