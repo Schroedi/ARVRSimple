@@ -23,9 +23,10 @@ namespace {
 const char *kName = "Powerwall";
 } // namespace
 
+// Eye matrix in world space
 godot_transform _get_eye_transform(void *p_data, int p_eye) {
     auto *arvr_data = (arvr_data_struct *)p_data;
-    assert(arvr_data != nullptr); // Invalid arvr data
+    assert(arvr_data != nullptr);
 
     godot_transform eye_offset_transform;
     godot_transform hmd_transform;
@@ -62,14 +63,13 @@ godot_transform _get_eye_transform(void *p_data, int p_eye) {
     godot_transform reference_frame = arvr_api->godot_arvr_get_reference_frame();
     //printTransform(reference_frame);
 
-    godot_transform transform; // = g_arvr_data->godot_cam_transform;
+    godot_transform transform;
     api->godot_transform_new_identity(&transform);
 
     transform = api->godot_transform_operator_multiply(&transform, &g_arvr_data->godot_cam_transform[p_eye]);
     transform = api->godot_transform_operator_multiply(&transform, &reference_frame);
     transform = api->godot_transform_operator_multiply(&transform, &hmd_transform);
     transform = api->godot_transform_operator_multiply(&transform, &eye_offset_transform);
-
 
     return transform;
 };
@@ -388,7 +388,7 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
 
 void godot_arvr_process(void *p_data) {
     auto *arvr_data = (arvr_data_struct *)p_data;
-    assert(arvr_data != nullptr); // "Invalid arvr data.");
+    assert(arvr_data != nullptr);
 
     updatePowerwallCoords();
 
