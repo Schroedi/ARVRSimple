@@ -376,7 +376,7 @@ void godot_arvr_commit_for_eye(void *p_data, godot_int p_eye,
         int windowWidth = 2560*2;
         api->godot_vector2_set_x(&s, windowWidth*2);
         if (p_eye == 2) {
-            api->godot_vector2_set_x(&p, -windowWidth);
+            //api->godot_vector2_set_x(&p, -windowWidth);
         }
         api->godot_rect2_set_size(p_screen_rect, &s);
         api->godot_rect2_set_position(p_screen_rect, &p);
