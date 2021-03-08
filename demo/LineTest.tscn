@@ -9,8 +9,8 @@
 [ext_resource path="res://texture_01.png" type="Texture" id=7]
 [ext_resource path="res://texture_09.png" type="Texture" id=8]
 [ext_resource path="res://WorldBlocksTexture.tres" type="Material" id=9]
-[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=10]
-[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=11]
+[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=10]
+[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Table.tscn" type="PackedScene" id=12]
 
 [sub_resource type="Environment" id=22]
@@ -103,7 +103,7 @@ subdivide_width = 2
 subdivide_height = 2
 subdivide_depth = 2
 
-[sub_resource type="BakedLightmapData" id=21]
+[sub_resource type="BakedLightmapData" id=23]
 bounds = AABB( -10, -10, -10, 20, 20, 20 )
 cell_space_transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, 40, 40, 40 )
 cell_subdiv = 8
@@ -115,8 +115,8 @@ script = ExtResource( 1 )
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 22 )
 
-[node name="ARVROrigin" parent="." instance=ExtResource( 10 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.506224, 0.632398 )
+[node name="ARVROrigin" parent="." instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
 far = 200.0
@@ -132,7 +132,6 @@ material/0 = SubResource( 11 )
 
 [node name="Screen" type="MeshInstance" parent="ARVROrigin"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.168327, -0.038 )
-visible = false
 mesh = SubResource( 12 )
 material/0 = SubResource( 13 )
 
@@ -240,7 +239,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155522, -0.44066 )
 mesh = SubResource( 20 )
 material/0 = null
 
-[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 11 )]
+[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 10 )]
 transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 visible = false
 
@@ -280,9 +279,10 @@ __meta__ = {
 [node name="Lighting" type="Spatial" parent="."]
 
 [node name="BakedLightmap" type="BakedLightmap" parent="Lighting"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.5686 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.229 )
 visible = false
-light_data = SubResource( 21 )
+bake_energy = 7.87
+light_data = SubResource( 23 )
 
 [node name="OmniLight" type="OmniLight" parent="Lighting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.36777, 2.76717, -2.14421 )
@@ -291,12 +291,12 @@ shadow_enabled = true
 
 [node name="SpotLight" type="SpotLight" parent="Lighting"]
 transform = Transform( 1, 0, 0, 0, 0.585023, 0.811017, 0, -0.811017, 0.585023, 0.742884, 2.53318, 0 )
+visible = false
 shadow_enabled = true
 
 [node name="DirectionalLight2" type="DirectionalLight" parent="Lighting"]
 transform = Transform( 0.701352, -0.330856, 0.631379, -0.0442959, 0.863813, 0.501861, -0.711437, -0.379949, 0.591182, 0, 0.791846, 0 )
 visible = false
-light_bake_mode = 2
 shadow_enabled = true
 shadow_bias = 0.05
 directional_shadow_normal_bias = 0.0
