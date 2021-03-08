@@ -3,16 +3,17 @@
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://textures/Wood_10_2K_Base_Color.png" type="Texture" id=2]
 [ext_resource path="res://checker_shader.shader" type="Shader" id=3]
-[ext_resource path="res://gravel.tres" type="Material" id=4]
+[ext_resource path="res://textures/gravel.tres" type="Material" id=4]
 [ext_resource path="res://TrackingDebug.gd" type="Script" id=5]
 [ext_resource path="res://Fps.gd" type="Script" id=6]
 [ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=7]
-[ext_resource path="res://texture_09.png" type="Texture" id=8]
-[ext_resource path="res://WorldBlocksTexture.tres" type="Material" id=9]
+[ext_resource path="res://textures/texture_09.png" type="Texture" id=8]
+[ext_resource path="res://textures/WorldBlocksTexture.tres" type="Material" id=9]
 [ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=10]
 [ext_resource path="res://textures/Wood_10_2K_Roughness.png" type="Texture" id=11]
 [ext_resource path="res://textures/Wood_10_2K_Normal.png" type="Texture" id=12]
 [ext_resource path="res://textures/Wood_10_2K_Height.png" type="Texture" id=13]
+
 
 [sub_resource type="ProceduralSky" id=1]
 sun_latitude = 72.25

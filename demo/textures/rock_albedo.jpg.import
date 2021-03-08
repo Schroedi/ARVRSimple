@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/texture_rock_depth.png-263bbd49c5f4a80a3ab535786ba3d2d0.s3tc.stex"
-path.etc2="res://.import/texture_rock_depth.png-263bbd49c5f4a80a3ab535786ba3d2d0.etc2.stex"
+path.s3tc="res://.import/rock_albedo.jpg-884497722eb03d2a0e704a0b64a1d2e2.s3tc.stex"
+path.etc2="res://.import/rock_albedo.jpg-884497722eb03d2a0e704a0b64a1d2e2.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://texture_rock_depth.png"
-dest_files=[ "res://.import/texture_rock_depth.png-263bbd49c5f4a80a3ab535786ba3d2d0.s3tc.stex", "res://.import/texture_rock_depth.png-263bbd49c5f4a80a3ab535786ba3d2d0.etc2.stex" ]
+source_file="res://textures/rock_albedo.jpg"
+dest_files=[ "res://.import/rock_albedo.jpg-884497722eb03d2a0e704a0b64a1d2e2.s3tc.stex", "res://.import/rock_albedo.jpg-884497722eb03d2a0e704a0b64a1d2e2.etc2.stex" ]
 
 [params]
 
@@ -25,7 +25,7 @@ flags/repeat=true
 flags/filter=true
 flags/mipmaps=true
 flags/anisotropic=false
-flags/srgb=2
+flags/srgb=1
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Checkermotoslogo.svg-fb6ad00cfac2847caac67bdc6c3a534f.stex"
+path="res://.import/Checkermotoslogo.svg-96f4648c099bf26dca74adbc5c7f44be.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Checkermotoslogo.svg"
-dest_files=[ "res://.import/Checkermotoslogo.svg-fb6ad00cfac2847caac67bdc6c3a534f.stex" ]
+source_file="res://textures/Checkermotoslogo.svg"
+dest_files=[ "res://.import/Checkermotoslogo.svg-96f4648c099bf26dca74adbc5c7f44be.stex" ]
 
 [params]
 

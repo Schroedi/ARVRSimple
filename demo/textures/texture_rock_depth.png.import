@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/Checker.png-da195aed54b2fe7781c3230ca2c7d5b4.s3tc.stex"
-path.etc2="res://.import/Checker.png-da195aed54b2fe7781c3230ca2c7d5b4.etc2.stex"
+path.s3tc="res://.import/texture_rock_depth.png-1ac5b784e122e503d416e205b6ca19d7.s3tc.stex"
+path.etc2="res://.import/texture_rock_depth.png-1ac5b784e122e503d416e205b6ca19d7.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Checker.png"
-dest_files=[ "res://.import/Checker.png-da195aed54b2fe7781c3230ca2c7d5b4.s3tc.stex", "res://.import/Checker.png-da195aed54b2fe7781c3230ca2c7d5b4.etc2.stex" ]
+source_file="res://textures/texture_rock_depth.png"
+dest_files=[ "res://.import/texture_rock_depth.png-1ac5b784e122e503d416e205b6ca19d7.s3tc.stex", "res://.import/texture_rock_depth.png-1ac5b784e122e503d416e205b6ca19d7.etc2.stex" ]
 
 [params]
 
@@ -25,7 +25,7 @@ flags/repeat=true
 flags/filter=true
 flags/mipmaps=true
 flags/anisotropic=false
-flags/srgb=1
+flags/srgb=2
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false

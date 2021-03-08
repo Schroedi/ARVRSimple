@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/Checkermotoslogo.svg.png-2c429c2f9a34f39d76275063ddeb2365.s3tc.stex"
-path.etc2="res://.import/Checkermotoslogo.svg.png-2c429c2f9a34f39d76275063ddeb2365.etc2.stex"
+path.s3tc="res://.import/texture_09.png-051ded0e3af82f410a4d12cd8d4cb882.s3tc.stex"
+path.etc2="res://.import/texture_09.png-051ded0e3af82f410a4d12cd8d4cb882.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Checkermotoslogo.svg.png"
-dest_files=[ "res://.import/Checkermotoslogo.svg.png-2c429c2f9a34f39d76275063ddeb2365.s3tc.stex", "res://.import/Checkermotoslogo.svg.png-2c429c2f9a34f39d76275063ddeb2365.etc2.stex" ]
+source_file="res://textures/texture_09.png"
+dest_files=[ "res://.import/texture_09.png-051ded0e3af82f410a4d12cd8d4cb882.s3tc.stex", "res://.import/texture_09.png-051ded0e3af82f410a4d12cd8d4cb882.etc2.stex" ]
 
 [params]
 
@@ -24,7 +24,7 @@ compress/normal_map=0
 flags/repeat=true
 flags/filter=true
 flags/mipmaps=true
-flags/anisotropic=false
+flags/anisotropic=true
 flags/srgb=1
 process/fix_alpha_border=true
 process/premult_alpha=false

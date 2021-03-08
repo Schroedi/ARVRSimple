@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/rock_albedo.jpg-22e9a32a083cfcfc2f4fff95187a039c.s3tc.stex"
-path.etc2="res://.import/rock_albedo.jpg-22e9a32a083cfcfc2f4fff95187a039c.etc2.stex"
+path.s3tc="res://.import/Checker.png-9d42e1e4a0e3e517840d13eba41329a1.s3tc.stex"
+path.etc2="res://.import/Checker.png-9d42e1e4a0e3e517840d13eba41329a1.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://rock_albedo.jpg"
-dest_files=[ "res://.import/rock_albedo.jpg-22e9a32a083cfcfc2f4fff95187a039c.s3tc.stex", "res://.import/rock_albedo.jpg-22e9a32a083cfcfc2f4fff95187a039c.etc2.stex" ]
+source_file="res://textures/Checker.png"
+dest_files=[ "res://.import/Checker.png-9d42e1e4a0e3e517840d13eba41329a1.s3tc.stex", "res://.import/Checker.png-9d42e1e4a0e3e517840d13eba41329a1.etc2.stex" ]
 
 [params]
 

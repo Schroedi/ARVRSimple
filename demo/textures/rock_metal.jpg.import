@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/rock_rough.jpg-4dc5db109393ce22de7ba90bc6555451.stex"
+path="res://.import/rock_metal.jpg-186de0a8e049adde60e9e62e5ba7b78c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://rock_rough.jpg"
-dest_files=[ "res://.import/rock_rough.jpg-4dc5db109393ce22de7ba90bc6555451.stex" ]
+source_file="res://textures/rock_metal.jpg"
+dest_files=[ "res://.import/rock_metal.jpg-186de0a8e049adde60e9e62e5ba7b78c.stex" ]
 
 [params]
 
