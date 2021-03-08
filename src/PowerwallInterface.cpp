@@ -194,7 +194,7 @@ godot_vector2 godot_arvr_get_render_targetsize(const void *p_data) {
 
     godot_vector2 size;
     if (arvr_data->home_debug) {
-        api->godot_vector2_new(&size, 2560, 1600);
+        api->godot_vector2_new(&size, 5120/2, 2160/2);
     } else {
         api->godot_vector2_new(&size, 2560, 1600);
     }
