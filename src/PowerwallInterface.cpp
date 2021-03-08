@@ -213,10 +213,10 @@ godot_transform godot_arvr_get_transform_for_eye(void *p_data, __unused godot_in
     arvr_data->godot_cam_transform[p_eye] = *p_cam_transform;
 
     godot_transform ret;
-    api->godot_transform_new_identity(&ret);
-    return ret;
+    //api->godot_transform_new_identity(&ret);
+    //return ret;
 
-    //return _get_eye_transform(p_data, p_eye);
+    return _get_eye_transform(p_data, p_eye);
 }
 
 
@@ -269,10 +269,10 @@ void godot_arvr_fill_projection_for_eye(void *p_data, godot_real *p_projection,
 
     float4x4 Pm(p_projection);
     float4x4 Pt = linalg::identity;
-    Pt[3] = {-api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
-             -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y),
-             -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z),
-             1};
+//    Pt[3] = {-api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_X),
+//             -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Y),
+//             -api->godot_vector3_get_axis(&pe, godot_vector3_axis::GODOT_VECTOR3_AXIS_Z),
+//             1};
 
     float4x4 Pcomplete = linalg::identity;
     //std::cout << "Pt: " << Pt << std::endl;

@@ -9,9 +9,9 @@
 [ext_resource path="res://textures/texture_01.png" type="Texture" id=7]
 [ext_resource path="res://textures/texture_09.png" type="Texture" id=8]
 [ext_resource path="res://textures/WorldBlocksTexture.tres" type="Material" id=9]
-[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=10]
+[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Table.tscn" type="PackedScene" id=11]
-[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=12]
+[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=12]
 [ext_resource path="res://textures/Wood_10_2K.tres" type="Material" id=13]
 
 [sub_resource type="Environment" id=1]
@@ -29,6 +29,7 @@ subdivide_depth = 2
 [sub_resource type="SpatialMaterial" id=3]
 flags_transparent = true
 flags_world_triplanar = true
+flags_do_not_receive_shadows = true
 albedo_color = Color( 1, 1, 1, 0.513726 )
 albedo_texture = ExtResource( 8 )
 uv1_triplanar = true
@@ -39,6 +40,7 @@ size = Vector2( 0.8, 0.34 )
 [sub_resource type="SpatialMaterial" id=5]
 flags_transparent = true
 flags_world_triplanar = true
+flags_do_not_receive_shadows = true
 albedo_color = Color( 0.14902, 1, 0, 0.47451 )
 albedo_texture = ExtResource( 7 )
 
@@ -116,7 +118,7 @@ script = ExtResource( 1 )
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
-[node name="ARVROrigin" parent="." instance=ExtResource( 12 )]
+[node name="ARVROrigin" parent="." instance=ExtResource( 10 )]
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
 far = 200.0
@@ -132,7 +134,6 @@ material/0 = SubResource( 3 )
 
 [node name="Screen" type="MeshInstance" parent="ARVROrigin"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.168327, -0.038 )
-visible = false
 mesh = SubResource( 4 )
 material/0 = SubResource( 5 )
 
@@ -236,11 +237,11 @@ mesh = SubResource( 18 )
 material/0 = ExtResource( 9 )
 
 [node name="Cube" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155522, -0.44066 )
+transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.0417948, 0.174573, 0.106222 )
 mesh = SubResource( 19 )
 material/0 = ExtResource( 13 )
 
-[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 10 )]
+[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 12 )]
 transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 visible = false
 
