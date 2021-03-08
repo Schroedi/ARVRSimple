@@ -461,7 +461,7 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     g_arvr_data->vrpnTracker = nullptr;
 
     // debugging settings
-    g_arvr_data->home_debug = false;
+    g_arvr_data->home_debug = true;
 
     // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates
