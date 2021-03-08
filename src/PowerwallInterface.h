@@ -46,6 +46,10 @@ typedef struct arvr_data_struct {
     // debugging
     bool home_debug;
 
+    // last transform we got in godot_arvr_get_transform_for_eye
+    // I suspect this is the ARVR Camera's transform in world space
+    // we use this to orient the screen relative to the camera
+    godot_transform godot_cam_transform[3];
 } arvr_data_struct;
 
 extern arvr_data_struct *g_arvr_data;
