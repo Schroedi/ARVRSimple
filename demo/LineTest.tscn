@@ -9,9 +9,9 @@
 [ext_resource path="res://textures/texture_01.png" type="Texture" id=7]
 [ext_resource path="res://textures/texture_09.png" type="Texture" id=8]
 [ext_resource path="res://textures/WorldBlocksTexture.tres" type="Material" id=9]
-[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=10]
+[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Table.tscn" type="PackedScene" id=11]
-[ext_resource path="res://assets/SK_Veh_Car_Muscle_01.tscn" type="PackedScene" id=12]
+[ext_resource path="res://addons/powerwall/PowerwallSetup.tscn" type="PackedScene" id=12]
 [ext_resource path="res://textures/Wood_10_2K.tres" type="Material" id=13]
 
 [sub_resource type="Environment" id=1]
@@ -118,7 +118,7 @@ script = ExtResource( 1 )
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
-[node name="ARVROrigin" parent="." instance=ExtResource( 10 )]
+[node name="ARVROrigin" parent="." instance=ExtResource( 12 )]
 
 [node name="ARVRCamera" parent="ARVROrigin" index="0"]
 far = 200.0
@@ -134,6 +134,7 @@ material/0 = SubResource( 3 )
 
 [node name="Screen" type="MeshInstance" parent="ARVROrigin"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.168327, -0.038 )
+visible = false
 mesh = SubResource( 4 )
 material/0 = SubResource( 5 )
 
@@ -241,7 +242,7 @@ transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.0417948, 0.174573, 0.1
 mesh = SubResource( 19 )
 material/0 = ExtResource( 13 )
 
-[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 12 )]
+[node name="SK_Veh_Car_Muscle_01" parent="." instance=ExtResource( 10 )]
 transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 visible = false
 
@@ -283,11 +284,11 @@ __meta__ = {
 [node name="BakedLightmap" type="BakedLightmap" parent="Lighting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.229 )
 visible = false
-bake_energy = 7.87
 light_data = SubResource( 20 )
 
 [node name="OmniLight" type="OmniLight" parent="Lighting"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.36777, 2.76717, -2.14421 )
+visible = false
 light_bake_mode = 2
 shadow_enabled = true
 
@@ -298,6 +299,7 @@ shadow_enabled = true
 
 [node name="DirectionalLight2" type="DirectionalLight" parent="Lighting"]
 transform = Transform( 0.701352, -0.330856, 0.631379, -0.0442959, 0.863813, 0.501861, -0.711437, -0.379949, 0.591182, 0, 0.791846, 0 )
+light_bake_mode = 2
 shadow_enabled = true
 shadow_bias = 0.05
 directional_shadow_normal_bias = 0.0

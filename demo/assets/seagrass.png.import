@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/DictyotaSubsurface.png-f4c73b4ac4ba36ff63b58458886046b9.s3tc.stex"
-path.etc2="res://.import/DictyotaSubsurface.png-f4c73b4ac4ba36ff63b58458886046b9.etc2.stex"
+path.s3tc="res://.import/seagrass.png-5e1d1174c1075bf9c63916cbf6755237.s3tc.stex"
+path.etc2="res://.import/seagrass.png-5e1d1174c1075bf9c63916cbf6755237.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/Dictyota/DictyotaSubsurface.png"
-dest_files=[ "res://.import/DictyotaSubsurface.png-f4c73b4ac4ba36ff63b58458886046b9.s3tc.stex", "res://.import/DictyotaSubsurface.png-f4c73b4ac4ba36ff63b58458886046b9.etc2.stex" ]
+source_file="res://assets/seagrass.png"
+dest_files=[ "res://.import/seagrass.png-5e1d1174c1075bf9c63916cbf6755237.s3tc.stex", "res://.import/seagrass.png-5e1d1174c1075bf9c63916cbf6755237.etc2.stex" ]
 
 [params]
 
