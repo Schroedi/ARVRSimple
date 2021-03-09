@@ -466,7 +466,7 @@ void *godot_arvr_constructor(godot_object *p_instance) {
     api->godot_transform_new_identity(&g_arvr_data->godot_cam_transform[2]);
 
     // debugging settings
-    g_arvr_data->home_debug = true;
+    g_arvr_data->home_debug = false;
 
     // projection screen coordinates - these are updated in updatePowerwallCoords method -- which currently is not implemented
     // world coordinates

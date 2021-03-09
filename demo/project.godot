@@ -9,19 +9,31 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "ResourceFormatLoader",
+"class": "HTerrainDataLoader",
+"language": "GDScript",
+"path": "res://addons/zylann.hterrain/hterrain_resource_loader.gd"
+}, {
+"base": "ResourceFormatSaver",
+"class": "HTerrainDataSaver",
+"language": "GDScript",
+"path": "res://addons/zylann.hterrain/hterrain_resource_saver.gd"
+}, {
 "base": "ARVRCamera",
 "class": "PowerwallCamera",
 "language": "GDScript",
 "path": "res://addons/powerwall/PowerwallCamera.gd"
 } ]
 _global_script_class_icons={
+"HTerrainDataLoader": "",
+"HTerrainDataSaver": "",
 "PowerwallCamera": ""
 }
 
 [application]
 
 config/name="Powerwall"
-run/main_scene="res://LineTest.tscn"
+run/main_scene="res://Scenes/Ocean.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -32,7 +44,7 @@ window/dpi/allow_hidpi=true
 
 [editor_plugins]
 
-enabled=PoolStringArray( "scatter" )
+enabled=PoolStringArray( "res://addons/scatter/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg" )
 
 [gdnative]
 

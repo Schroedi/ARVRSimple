@@ -12,7 +12,8 @@ func _ready():
 	if arvr_interface and arvr_interface.initialize():
 		get_viewport().arvr = true
 		if not debug_emulate_vrpn:
-			powerwall.set_tracker_url("UserB@tcp:134.102.222.124")
+			#powerwall.set_tracker_url("UserB@tcp:134.102.222.124") # optitrack
+			powerwall.set_tracker_url("UserB@tcp:134.102.222.45") # cgvr 45
 	else:
 		print("Could not start powerwall interface")
 	
